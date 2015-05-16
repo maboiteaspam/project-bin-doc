@@ -177,7 +177,7 @@ program
          */</span>
       }).skip(!machine.profileData.doc.yuidoc)
       .each(machine.profileData.doc.yuidoc, <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(from, to)</span></span>{
-        line.stream(<span class="hljs-string">'yuidoc -o &lt;%=tmpPath%&gt;/'</span>+to+<span class="hljs-string">' -c &lt;%=projectPath%&gt;/package.json &lt;%=projectPath%&gt;/'</span>+from, <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span></span>{
+        line.stream(<span class="hljs-string">'yuidoc -o &lt;%=tmpPath%&gt;/'</span>+to+<span class="hljs-string">' -c &lt;%=projectPath%&gt;/package.json -x node_modules &lt;%=projectPath%&gt;/'</span>+from, <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span></span>{
           <span class="hljs-keyword">this</span>.spinUntil(<span class="hljs-regexp">/.+/</span>);
           <span class="hljs-keyword">this</span>.success(<span class="hljs-string">'completed'</span>);
           <span class="hljs-keyword">this</span>.display();
