@@ -146,6 +146,9 @@ var env = !program.env?'local':program.env;
         if(machine.profileData.doc.yuidoc.themedir){
           cmd += '-t "'+machine.profileData.doc.yuidoc.themedir+'" ';
         }
+        if(machine.profileData.doc.yuidoc.exclude){
+          cmd += '-x "'+machine.profileData.doc.yuidoc.exclude.join(',')+'" ';
+        }
         if(machine.profileData.doc.yuidoc.theme){
           cmd += '-T "'+machine.profileData.doc.yuidoc.theme+'" ';
         }
