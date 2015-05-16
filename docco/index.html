@@ -154,7 +154,7 @@ program
          *  JsDox
          */</span>
       }).skip(!machine.profileData.doc.jsdox)
-      .each(machine.profileData.doc.jsdox, <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(from, to)</span></span>{
+      .each(machine.profileData.doc.jsdox.paths, <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(from, to)</span></span>{
         line.stream(<span class="hljs-string">'jsdox -r --output &lt;%=tmpPath%&gt;/'</span>+to+<span class="hljs-string">' &lt;%=projectPath%&gt;/'</span>+from, <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span></span>{
           <span class="hljs-keyword">this</span>.spinUntil(<span class="hljs-regexp">/.+/</span>);
           <span class="hljs-keyword">this</span>.success(<span class="hljs-string">'completed'</span>);
@@ -165,7 +165,7 @@ program
          *  JsDoc
          */</span>
       }).skip(!machine.profileData.doc.jsdoc)
-      .each(machine.profileData.doc.jsdoc, <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(from, to)</span></span>{
+      .each(machine.profileData.doc.jsdoc.paths, <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(from, to)</span></span>{
         line.stream(<span class="hljs-string">'jsdoc -r &lt;%=projectPath%&gt;/'</span>+from+<span class="hljs-string">' -d &lt;%=tmpPath%&gt;/'</span>+to, <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span></span>{
           <span class="hljs-keyword">this</span>.spinUntil(<span class="hljs-regexp">/.+/</span>);
           <span class="hljs-keyword">this</span>.success(<span class="hljs-string">'completed'</span>);
@@ -176,8 +176,27 @@ program
          *  YuiDoc
          */</span>
       }).skip(!machine.profileData.doc.yuidoc)
-      .each(machine.profileData.doc.yuidoc, <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(from, to)</span></span>{
-        line.stream(<span class="hljs-string">'yuidoc -o &lt;%=tmpPath%&gt;/'</span>+to+<span class="hljs-string">' -c &lt;%=projectPath%&gt;/package.json -x node_modules &lt;%=projectPath%&gt;/'</span>+from, <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span></span>{
+      .each(machine.profileData.doc.yuidoc.paths, <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(from, to)</span></span>{
+        <span class="hljs-keyword">var</span> cmd = <span class="hljs-string">'yuidoc '</span>;
+        cmd += <span class="hljs-string">'-o &lt;%=tmpPath%&gt;/'</span>+to+<span class="hljs-string">' '</span>;
+        cmd += <span class="hljs-string">'-c &lt;%=projectPath%&gt;/package.json '</span>;
+        <span class="hljs-keyword">if</span>(machine.profileData.doc.yuidoc.selleck){
+          cmd += <span class="hljs-string">'--selleck '</span>;
+        }
+        <span class="hljs-keyword">if</span>(machine.profileData.doc.yuidoc.lint){
+          cmd += <span class="hljs-string">'--lint '</span>;
+        }
+        <span class="hljs-keyword">if</span>(machine.profileData.doc.yuidoc.themedir){
+          cmd += <span class="hljs-string">'-t "'</span>+machine.profileData.doc.yuidoc.themedir+<span class="hljs-string">'" '</span>;
+        }
+        <span class="hljs-keyword">if</span>(machine.profileData.doc.yuidoc.theme){
+          cmd += <span class="hljs-string">'-T "'</span>+machine.profileData.doc.yuidoc.theme+<span class="hljs-string">'" '</span>;
+        }
+        <span class="hljs-keyword">if</span>(machine.profileData.doc.yuidoc.syntaxtype){
+          cmd += <span class="hljs-string">'--syntaxtype "'</span>+machine.profileData.doc.yuidoc.syntaxtype+<span class="hljs-string">'" '</span>;
+        }
+        cmd += <span class="hljs-string">'&lt;%=projectPath%&gt;/'</span>+from+<span class="hljs-string">' '</span>;
+        line.stream(cmd, <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span></span>{
           <span class="hljs-keyword">this</span>.spinUntil(<span class="hljs-regexp">/.+/</span>);
           <span class="hljs-keyword">this</span>.success(<span class="hljs-string">'completed'</span>);
           <span class="hljs-keyword">this</span>.display();
@@ -187,8 +206,26 @@ program
          *  docco
          */</span>
       }).skip(!machine.profileData.doc.docco)
-      .each(machine.profileData.doc.docco, <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(from, to)</span></span>{
-        line.stream(<span class="hljs-string">'docco -o &lt;%=tmpPath%&gt;/'</span>+to+<span class="hljs-string">' &lt;%=projectPath%&gt;/'</span>+from, <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span></span>{
+      .each(machine.profileData.doc.docco.paths, <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(from, to)</span></span>{
+        <span class="hljs-keyword">var</span> cmd = <span class="hljs-string">'docco '</span>;
+        cmd += <span class="hljs-string">'-o &lt;%=tmpPath%&gt;/'</span>+to+<span class="hljs-string">' '</span>;
+        <span class="hljs-keyword">if</span>(machine.profileData.doc.docco.layout){
+          cmd += <span class="hljs-string">'-l "'</span>+machine.profileData.doc.docco.layout+<span class="hljs-string">'" '</span>;
+        }
+        <span class="hljs-keyword">if</span>(machine.profileData.doc.docco.template){
+          cmd += <span class="hljs-string">'-t "'</span>+machine.profileData.doc.docco.template+<span class="hljs-string">'" '</span>;
+        }
+        <span class="hljs-keyword">if</span>(machine.profileData.doc.docco.extension){
+          cmd += <span class="hljs-string">'-e "'</span>+machine.profileData.doc.docco.extension+<span class="hljs-string">'" '</span>;
+        }
+        <span class="hljs-keyword">if</span>(machine.profileData.doc.docco.languages){
+          cmd += <span class="hljs-string">'-l "'</span>+machine.profileData.doc.docco.languages+<span class="hljs-string">'" '</span>;
+        }
+        <span class="hljs-keyword">if</span>(machine.profileData.doc.docco.marked){
+          cmd += <span class="hljs-string">'-m "'</span>+machine.profileData.doc.docco.marked+<span class="hljs-string">'" '</span>;
+        }
+        cmd += <span class="hljs-string">'&lt;%=projectPath%&gt;/'</span>+from+<span class="hljs-string">' '</span>;
+        line.stream(cmd, <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span></span>{
           <span class="hljs-keyword">this</span>.spinUntil(<span class="hljs-regexp">/.+/</span>);
           <span class="hljs-keyword">this</span>.success(<span class="hljs-string">'completed'</span>);
           <span class="hljs-keyword">this</span>.display();
@@ -198,8 +235,17 @@ program
          *  apidoc
          */</span>
       }).skip(!machine.profileData.doc.apidoc)
-      .each(machine.profileData.doc.apidoc, <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(from, to)</span></span>{
-        line.stream(<span class="hljs-string">'apidoc -o &lt;%=tmpPath%&gt;/'</span>+to+<span class="hljs-string">' &lt;%=projectPath%&gt;/'</span>+from, <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span></span>{
+      .each(machine.profileData.doc.apidoc.paths, <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(from, to)</span></span>{
+        <span class="hljs-keyword">var</span> cmd = <span class="hljs-string">'apidoc '</span>;
+        <span class="hljs-keyword">if</span>(machine.profileData.doc.apidoc.filters){
+          cmd += <span class="hljs-string">'-f "'</span>+machine.profileData.doc.apidoc.filters+<span class="hljs-string">'" '</span>;
+        }
+        <span class="hljs-keyword">if</span>(machine.profileData.doc.apidoc.template){
+          cmd += <span class="hljs-string">'-t "'</span>+machine.profileData.doc.apidoc.template+<span class="hljs-string">'" '</span>;
+        }
+        cmd += <span class="hljs-string">'-o &lt;%=tmpPath%&gt;/'</span>+to+<span class="hljs-string">' '</span>;
+        cmd += <span class="hljs-string">'-i &lt;%=projectPath%&gt;/'</span>+from+<span class="hljs-string">' '</span>;
+        line.stream(cmd, <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span></span>{
           <span class="hljs-keyword">this</span>.spinUntil(<span class="hljs-regexp">/.+/</span>);
           <span class="hljs-keyword">this</span>.success(<span class="hljs-string">'completed'</span>);
           <span class="hljs-keyword">this</span>.display();
