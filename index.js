@@ -1,6 +1,7 @@
 #!/usr/bin/env node
 
 var path = require('path');
+var _s = require('underscore.string');
 var program = require('commander');
 var Config = require("project-bin-config");
 var Cluc = require('cluc');
@@ -29,16 +30,23 @@ var env = !program.env?'local':program.env;
 (new Config()).load().get(env)
   .forEach(function(machine){
 
-    var line = new Cluc()
-
+    var line = new Cluc();
+    line
       .ensureFileContains('.gitignore', '\n.local.json\n')
       .ensureFileContains('.gitignore', '\n.idea/\n')
 
-      .readFile('./version', function(next, content){
-        content = _s.trim(content);
-        this.saveValue('releaseType', content.match(/^([^\s]+)/)[1]);
-        this.saveValue('revision', content.match(/\s+([^\s]+)$/)[1]);
-        next();
+      .readFile('./version', function(err, content){
+        var rev = '-';
+        var type = '-';
+        if(!err){
+          content = _s.trim(content);
+          type = content.match(/^([^\s]+)/)[1];
+          rev = content.match(/\s+([^\s]+)$/)[1];
+        }else{
+          rev = pkg.version;
+        }
+        this.saveValue('releaseType', type);
+        this.saveValue('revision', rev);
 
       }).then(function(next){
         if(!pkg.name){
@@ -49,6 +57,7 @@ var env = !program.env?'local':program.env;
         }
         this.saveValue('pkgName', pkg.name);
         this.saveValue('pkgRepository', pkg.repository);
+        this.saveValue('projectPath', projectPath);
         this.saveValue('sshUrl', sshUrl);
         this.saveValue('gitAuth', machine.profileData.github);
         this.saveValue('ghBranch', machine.profileData.doc.ghBranch);
@@ -72,7 +81,7 @@ var env = !program.env?'local':program.env;
         /**
          *  Repository preparation
          */
-      }).stream('git clone <%=sshUrl%>', function(){
+      }).stream('git clone <%=sshUrl%> .', function(){
         this.warn(/fatal:/);
         this.display();
       }).stream('git checkout <%=ghBranch%>', function(){
@@ -103,7 +112,7 @@ var env = !program.env?'local':program.env;
          */
       }).skip(!machine.profileData.doc.jsdox)
       .each(machine.profileData.doc.jsdox, function(from, to){
-        line.stream('jsdox -r --output <%=tmpPath%>'+to+' <%=projectPath%>'+from, function(){
+        line.stream('jsdox -r --output <%=tmpPath%>/'+to+' <%=projectPath%>/'+from, function(){
           this.spinUntil(/.+/);
           this.success('completed');
           this.display();
@@ -114,7 +123,7 @@ var env = !program.env?'local':program.env;
          */
       }).skip(!machine.profileData.doc.jsdoc)
       .each(machine.profileData.doc.jsdoc, function(from, to){
-        line.stream('jsdoc -r <%=projectPath%>'+from+' <%=tmpPath%>'+to, function(){
+        line.stream('jsdoc -r <%=projectPath%>/'+from+' <%=tmpPath%>/'+to, function(){
           this.spinUntil(/.+/);
           this.success('completed');
           this.display();
@@ -138,7 +147,7 @@ var env = !program.env?'local':program.env;
         this.display();
         sendGhAuth(this);
 
-      }).stream('git commit -am "Generate documentation for <%=releaseType%> <%=newRevision%>"', function(){
+      }).stream('git commit -am "Generate documentation for <%=releaseType%> <%=revision%>"', function(){
         this.success(/\[([\w-]+)\s+([\w-]+)]/i,
           'branch\t\t%s\nnew revision\t%s');
         this.success(/([0-9]+)\s+file[^0-9]+?([0-9]+)?[^0-9]+?([0-9]+)?/i,
@@ -147,14 +156,16 @@ var env = !program.env?'local':program.env;
         sendGhAuth(this);
         this.display();
 
-      }).stream('git push <%=sshUrl%>', function(){
+      }).stream('git -c core.askpass=true push <%=sshUrl%>', function(){
         this.warn(/fatal:/);
         this.success(/(est propre|is clean)/i, 'Everything up-to-date');
+        sendGhAuth(this);
         this.display();
 
       }).stream('git status', function(){
         this.warn(/fatal:/);
         this.success(/(est propre|is clean)/i, 'Everything up-to-date');
+        sendGhAuth(this);
         this.display();
 
         /**

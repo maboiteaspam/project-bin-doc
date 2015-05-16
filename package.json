@@ -18,6 +18,7 @@
     "cluc": "^1.0.23",
     "commander": "^2.8.1",
     "github": "^0.2.4",
-    "semver": "^4.3.4"
+    "semver": "^4.3.4",
+    "underscore.string": "^3.0.3"
   }
 }
