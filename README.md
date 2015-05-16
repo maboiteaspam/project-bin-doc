@@ -14,7 +14,7 @@ npm i project-bin-doc -g
 ```sh
   Usage: project-doc [env]
 
-  Publish your project
+  Generate documentation
 
   Options:
 
