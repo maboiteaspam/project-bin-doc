@@ -1,0 +1,118 @@
+{
+    "project": {},
+    "files": {
+        "/home/maboiteaspam/Bureau/project-bin-doc/index.js": {
+            "name": "/home/maboiteaspam/Bureau/project-bin-doc/index.js",
+            "modules": {},
+            "classes": {},
+            "fors": {},
+            "namespaces": {}
+        }
+    },
+    "modules": {},
+    "classes": {},
+    "classitems": [
+        {
+            "file": "/home/maboiteaspam/Bureau/project-bin-doc/index.js",
+            "line": 96,
+            "description": "Repository preparation",
+            "class": ""
+        },
+        {
+            "file": "/home/maboiteaspam/Bureau/project-bin-doc/index.js",
+            "line": 114,
+            "description": "README",
+            "class": ""
+        },
+        {
+            "file": "/home/maboiteaspam/Bureau/project-bin-doc/index.js",
+            "line": 122,
+            "description": "JsDox",
+            "class": ""
+        },
+        {
+            "file": "/home/maboiteaspam/Bureau/project-bin-doc/index.js",
+            "line": 133,
+            "description": "JsDoc",
+            "class": ""
+        },
+        {
+            "file": "/home/maboiteaspam/Bureau/project-bin-doc/index.js",
+            "line": 144,
+            "description": "YuiDoc",
+            "class": ""
+        },
+        {
+            "file": "/home/maboiteaspam/Bureau/project-bin-doc/index.js",
+            "line": 177,
+            "description": "docco",
+            "class": ""
+        },
+        {
+            "file": "/home/maboiteaspam/Bureau/project-bin-doc/index.js",
+            "line": 206,
+            "description": "apidoc",
+            "class": ""
+        },
+        {
+            "file": "/home/maboiteaspam/Bureau/project-bin-doc/index.js",
+            "line": 226,
+            "description": "MOCHA",
+            "class": ""
+        },
+        {
+            "file": "/home/maboiteaspam/Bureau/project-bin-doc/index.js",
+            "line": 237,
+            "description": "Git commit and push",
+            "class": ""
+        },
+        {
+            "file": "/home/maboiteaspam/Bureau/project-bin-doc/index.js",
+            "line": 265,
+            "description": "Clean up",
+            "class": ""
+        }
+    ],
+    "warnings": [
+        {
+            "message": "Missing item type\nRepository preparation",
+            "line": " /home/maboiteaspam/Bureau/project-bin-doc/index.js:96"
+        },
+        {
+            "message": "Missing item type\nREADME",
+            "line": " /home/maboiteaspam/Bureau/project-bin-doc/index.js:114"
+        },
+        {
+            "message": "Missing item type\nJsDox",
+            "line": " /home/maboiteaspam/Bureau/project-bin-doc/index.js:122"
+        },
+        {
+            "message": "Missing item type\nJsDoc",
+            "line": " /home/maboiteaspam/Bureau/project-bin-doc/index.js:133"
+        },
+        {
+            "message": "Missing item type\nYuiDoc",
+            "line": " /home/maboiteaspam/Bureau/project-bin-doc/index.js:144"
+        },
+        {
+            "message": "Missing item type\ndocco",
+            "line": " /home/maboiteaspam/Bureau/project-bin-doc/index.js:177"
+        },
+        {
+            "message": "Missing item type\napidoc",
+            "line": " /home/maboiteaspam/Bureau/project-bin-doc/index.js:206"
+        },
+        {
+            "message": "Missing item type\nMOCHA",
+            "line": " /home/maboiteaspam/Bureau/project-bin-doc/index.js:226"
+        },
+        {
+            "message": "Missing item type\nGit commit and push",
+            "line": " /home/maboiteaspam/Bureau/project-bin-doc/index.js:237"
+        },
+        {
+            "message": "Missing item type\nClean up",
+            "line": " /home/maboiteaspam/Bureau/project-bin-doc/index.js:265"
+        }
+    ]
+}
