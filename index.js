@@ -110,10 +110,6 @@ var env = !program.env?'local':program.env;
       }).stream('git checkout -b <%=ghBranch%>', function(){
         this.warn(/fatal:/);
         this.display();
-      }).stream('rm -fr <%=tmpPath%>/*')
-      .stream('ls -alh', function(){
-        this.warn(/fatal:/);
-        this.display();
       })
     /**
      *  README
