@@ -41,6 +41,15 @@ Create a ```.local.json``` file on root directory of your project.
       "jsdoc":{
         "index.js":"docs/"
       },
+      "yuidoc":{
+        "**":"yuidoc/"
+      },
+      "docco":{
+        "index.js":"docco/"
+      },
+      "apidoc":{
+        "index.js":"apidoc/"
+      },
       "mocha": true
     }
   }

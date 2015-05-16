@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+  <title>index.js</title>
+  <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+  <meta name="viewport" content="width=device-width, target-densitydpi=160dpi, initial-scale=1.0; maximum-scale=1.0; user-scalable=0;">
+  <link rel="stylesheet" media="all" href="docco.css" />
+</head>
+<body>
+  <div id="container">
+    <div id="background"></div>
+    
+    <ul class="sections">
+        
+          <li id="title">
+              <div class="annotation">
+                  <h1>index.js</h1>
+              </div>
+          </li>
+        
+        
+        
+        <li id="section-1">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-1">&#182;</a>
+              </div>
+              
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>#!<span class="hljs-regexp">/usr/</span>bin/env node
+
+<span class="hljs-keyword">var</span> path = <span class="hljs-built_in">require</span>(<span class="hljs-string">'path'</span>);
+<span class="hljs-keyword">var</span> _s = <span class="hljs-built_in">require</span>(<span class="hljs-string">'underscore.string'</span>);
+<span class="hljs-keyword">var</span> program = <span class="hljs-built_in">require</span>(<span class="hljs-string">'commander'</span>);
+<span class="hljs-keyword">var</span> Config = <span class="hljs-built_in">require</span>(<span class="hljs-string">"project-bin-config"</span>);
+<span class="hljs-keyword">var</span> Cluc = <span class="hljs-built_in">require</span>(<span class="hljs-string">'cluc'</span>);
+<span class="hljs-keyword">var</span> Transport = Cluc.transports.process;</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-2">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-2">&#182;</a>
+              </div>
+              <p>region Program</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>
+<span class="hljs-keyword">var</span> projectPath = process.cwd();
+<span class="hljs-keyword">var</span> pkg = <span class="hljs-built_in">require</span>(path.join(projectPath, <span class="hljs-string">'package.json'</span>) );
+
+<span class="hljs-keyword">var</span> releaseType;
+<span class="hljs-keyword">var</span> revision = pkg.version;
+<span class="hljs-keyword">var</span> tmpPath;
+<span class="hljs-keyword">var</span> sshUrl = pkg.repository.url.replace(<span class="hljs-regexp">/https?:\/\//</span>,<span class="hljs-string">'ssh://git@'</span>);
+
+program
+  .version(<span class="hljs-built_in">require</span>(path.join(__dirname, <span class="hljs-string">'package.json'</span>) ).version)
+  .usage(<span class="hljs-string">'[env]'</span>)
+  .description(<span class="hljs-string">'Generate documentation'</span>)
+  .arguments(<span class="hljs-string">'[env]'</span>)
+  .parse(process.argv);
+
+<span class="hljs-keyword">var</span> env = !program.env?<span class="hljs-string">'local'</span>:program.env;
+
+(<span class="hljs-keyword">new</span> Config()).load().get(env)
+  .forEach(<span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(machine)</span></span>{
+
+    <span class="hljs-keyword">var</span> line = <span class="hljs-keyword">new</span> Cluc();
+    line
+      .ensureFileContains(<span class="hljs-string">'.gitignore'</span>, <span class="hljs-string">'\n.local.json\n'</span>)
+      .ensureFileContains(<span class="hljs-string">'.gitignore'</span>, <span class="hljs-string">'\n.idea/\n'</span>)
+
+      .readFile(<span class="hljs-string">'./version'</span>, <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(err, content)</span></span>{
+        <span class="hljs-keyword">var</span> rev = <span class="hljs-string">'-'</span>;
+        <span class="hljs-keyword">var</span> type = <span class="hljs-string">'-'</span>;
+        <span class="hljs-keyword">if</span>(!err){
+          content = _s.trim(content);
+          type = content.match(<span class="hljs-regexp">/^([^\s]+)/</span>)[<span class="hljs-number">1</span>];
+          rev = content.match(<span class="hljs-regexp">/\s+([^\s]+)$/</span>)[<span class="hljs-number">1</span>];
+        }<span class="hljs-keyword">else</span>{
+          rev = pkg.version;
+        }
+        <span class="hljs-keyword">this</span>.saveValue(<span class="hljs-string">'releaseType'</span>, type);
+        <span class="hljs-keyword">this</span>.saveValue(<span class="hljs-string">'revision'</span>, rev);
+
+      }).then(<span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(next)</span></span>{
+        <span class="hljs-keyword">if</span>(!pkg.name){
+          <span class="hljs-keyword">throw</span> <span class="hljs-string">'pkg.name is missing'</span>;
+        }
+        <span class="hljs-keyword">if</span>(!pkg.repository){
+          <span class="hljs-keyword">throw</span> <span class="hljs-string">'pkg.repository is missing'</span>;
+        }
+        <span class="hljs-keyword">this</span>.saveValue(<span class="hljs-string">'pkgName'</span>, pkg.name);
+        <span class="hljs-keyword">this</span>.saveValue(<span class="hljs-string">'pkgRepository'</span>, pkg.repository);
+        <span class="hljs-keyword">this</span>.saveValue(<span class="hljs-string">'projectPath'</span>, projectPath);
+        <span class="hljs-keyword">this</span>.saveValue(<span class="hljs-string">'sshUrl'</span>, sshUrl);
+        <span class="hljs-keyword">this</span>.saveValue(<span class="hljs-string">'gitAuth'</span>, machine.profileData.github);
+        <span class="hljs-keyword">this</span>.saveValue(<span class="hljs-string">'ghBranch'</span>, machine.profileData.doc.ghBranch);
+        <span class="hljs-keyword">this</span>.saveValue(<span class="hljs-string">'jsdox'</span>, machine.profileData.doc.jsdox);
+        <span class="hljs-keyword">this</span>.saveValue(<span class="hljs-string">'jsdoc'</span>, machine.profileData.doc.jsdoc);
+        <span class="hljs-keyword">this</span>.saveValue(<span class="hljs-string">'yuidoc'</span>, machine.profileData.doc.yuidoc);
+        <span class="hljs-keyword">this</span>.saveValue(<span class="hljs-string">'docco'</span>, machine.profileData.doc.docco);
+        <span class="hljs-keyword">this</span>.saveValue(<span class="hljs-string">'apidoc'</span>, machine.profileData.doc.apidoc);
+        <span class="hljs-keyword">this</span>.saveValue(<span class="hljs-string">'mocha'</span>, machine.profileData.doc.mocha);
+        next();
+
+      }).title(<span class="hljs-string">''</span>, <span class="hljs-string">'Generating documentation \n'</span> +
+      <span class="hljs-string">'on &lt;%=ghBranch%&gt; for &lt;%=releaseType%&gt; &lt;%=revision%&gt;'</span>)
+
+      .mktemp(pkg.name, <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(err, tmpDir)</span></span>{
+        <span class="hljs-keyword">this</span>.display();
+        <span class="hljs-keyword">this</span>.dieOnError();
+        tmpPath = tmpDir;
+        <span class="hljs-keyword">this</span>.saveValue(<span class="hljs-string">'tmpPath'</span>, tmpPath);
+
+      }).stream(<span class="hljs-string">'cd &lt;%=tmpPath%&gt;'</span>, <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span></span>{
+        <span class="hljs-keyword">this</span>.display();
+
+        <span class="hljs-comment">/**
+         *  Repository preparation
+         */</span>
+      }).stream(<span class="hljs-string">'git clone &lt;%=sshUrl%&gt; .'</span>, <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span></span>{
+        <span class="hljs-keyword">this</span>.warn(<span class="hljs-regexp">/fatal:/</span>);
+        <span class="hljs-keyword">this</span>.display();
+      }).stream(<span class="hljs-string">'git checkout &lt;%=ghBranch%&gt;'</span>, <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span></span>{
+        <span class="hljs-keyword">this</span>.warn(<span class="hljs-regexp">/fatal:/</span>);
+        <span class="hljs-keyword">this</span>.display();
+      }).stream(<span class="hljs-string">'git checkout -b &lt;%=ghBranch%&gt;'</span>, <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span></span>{
+        <span class="hljs-keyword">this</span>.warn(<span class="hljs-regexp">/fatal:/</span>);
+        <span class="hljs-keyword">this</span>.display();
+
+      }).stream(<span class="hljs-string">'rm -fr &lt;%=tmpPath%&gt;/*'</span>, <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span></span>{
+      }).stream(<span class="hljs-string">'ls -alh'</span>, <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span></span>{
+        <span class="hljs-keyword">this</span>.warn(<span class="hljs-regexp">/fatal:/</span>);
+        <span class="hljs-keyword">this</span>.display();
+
+        <span class="hljs-comment">/**
+         *  README
+         */</span>
+      }).putFile(<span class="hljs-string">'&lt;%=projectPath%&gt;/README.md'</span>, <span class="hljs-string">'&lt;%=tmpPath%&gt;/README.md'</span>, <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span></span>{
+        <span class="hljs-keyword">this</span>.warn(<span class="hljs-regexp">/fatal:/</span>);
+        <span class="hljs-keyword">this</span>.success(<span class="hljs-regexp">/(est propre|is clean)/i</span>, <span class="hljs-string">'Everything up-to-date'</span>);
+        <span class="hljs-keyword">this</span>.display();
+
+        <span class="hljs-comment">/**
+         *  JsDox
+         */</span>
+      }).skip(!machine.profileData.doc.jsdox)
+      .each(machine.profileData.doc.jsdox, <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(from, to)</span></span>{
+        line.stream(<span class="hljs-string">'jsdox -r --output &lt;%=tmpPath%&gt;/'</span>+to+<span class="hljs-string">' &lt;%=projectPath%&gt;/'</span>+from, <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span></span>{
+          <span class="hljs-keyword">this</span>.spinUntil(<span class="hljs-regexp">/.+/</span>);
+          <span class="hljs-keyword">this</span>.success(<span class="hljs-string">'completed'</span>);
+          <span class="hljs-keyword">this</span>.display();
+        });
+
+        <span class="hljs-comment">/**
+         *  JsDoc
+         */</span>
+      }).skip(!machine.profileData.doc.jsdoc)
+      .each(machine.profileData.doc.jsdoc, <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(from, to)</span></span>{
+        line.stream(<span class="hljs-string">'jsdoc -r &lt;%=projectPath%&gt;/'</span>+from+<span class="hljs-string">' -d &lt;%=tmpPath%&gt;/'</span>+to, <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span></span>{
+          <span class="hljs-keyword">this</span>.spinUntil(<span class="hljs-regexp">/.+/</span>);
+          <span class="hljs-keyword">this</span>.success(<span class="hljs-string">'completed'</span>);
+          <span class="hljs-keyword">this</span>.display();
+        });
+
+        <span class="hljs-comment">/**
+         *  YuiDoc
+         */</span>
+      }).skip(!machine.profileData.doc.yuidoc)
+      .each(machine.profileData.doc.yuidoc, <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(from, to)</span></span>{
+        line.stream(<span class="hljs-string">'yuidoc -o &lt;%=tmpPath%&gt;/'</span>+to+<span class="hljs-string">' -c &lt;%=projectPath%&gt;/package.json &lt;%=projectPath%&gt;/'</span>+from, <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span></span>{
+          <span class="hljs-keyword">this</span>.spinUntil(<span class="hljs-regexp">/.+/</span>);
+          <span class="hljs-keyword">this</span>.success(<span class="hljs-string">'completed'</span>);
+          <span class="hljs-keyword">this</span>.display();
+        });
+
+        <span class="hljs-comment">/**
+         *  docco
+         */</span>
+      }).skip(!machine.profileData.doc.docco)
+      .each(machine.profileData.doc.docco, <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(from, to)</span></span>{
+        line.stream(<span class="hljs-string">'docco -o &lt;%=tmpPath%&gt;/'</span>+to+<span class="hljs-string">' &lt;%=projectPath%&gt;/'</span>+from, <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span></span>{
+          <span class="hljs-keyword">this</span>.spinUntil(<span class="hljs-regexp">/.+/</span>);
+          <span class="hljs-keyword">this</span>.success(<span class="hljs-string">'completed'</span>);
+          <span class="hljs-keyword">this</span>.display();
+        });
+
+        <span class="hljs-comment">/**
+         *  apidoc
+         */</span>
+      }).skip(!machine.profileData.doc.apidoc)
+      .each(machine.profileData.doc.apidoc, <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(from, to)</span></span>{
+        line.stream(<span class="hljs-string">'apidoc -o &lt;%=tmpPath%&gt;/'</span>+to+<span class="hljs-string">' &lt;%=projectPath%&gt;/'</span>+from, <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span></span>{
+          <span class="hljs-keyword">this</span>.spinUntil(<span class="hljs-regexp">/.+/</span>);
+          <span class="hljs-keyword">this</span>.success(<span class="hljs-string">'completed'</span>);
+          <span class="hljs-keyword">this</span>.display();
+        });
+
+        <span class="hljs-comment">/**
+         *  MOCHA
+         */</span>
+      }).stream(<span class="hljs-string">'cd &lt;%=projectPath%&gt;'</span>, <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span></span>{
+      }).skip(!machine.profileData.doc.mocha)
+      .stream(<span class="hljs-string">'mocha --reporter markdown &gt; &lt;%=tmpPath%&gt;/mocha-toc.md'</span>, <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span></span>{
+        <span class="hljs-keyword">this</span>.spinUntil(<span class="hljs-regexp">/.+/</span>);
+        <span class="hljs-keyword">this</span>.success(<span class="hljs-string">'completed'</span>);
+        <span class="hljs-keyword">this</span>.display();
+      }).stream(<span class="hljs-string">'cd &lt;%=tmpPath%&gt;'</span>, <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span></span>{
+
+        <span class="hljs-comment">/**
+         *  Git commit and push
+         */</span>
+      }).stream(<span class="hljs-string">'git add -A'</span>, <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span></span>{
+        <span class="hljs-keyword">this</span>.display();
+        sendGhAuth(<span class="hljs-keyword">this</span>);
+
+      }).stream(<span class="hljs-string">'git commit -am "Generate documentation for &lt;%=releaseType%&gt; &lt;%=revision%&gt;"'</span>, <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span></span>{
+        <span class="hljs-keyword">this</span>.success(<span class="hljs-regexp">/\[([\w-]+)\s+([\w-]+)]/i</span>,
+          <span class="hljs-string">'branch\t\t%s\nnew revision\t%s'</span>);
+        <span class="hljs-keyword">this</span>.success(<span class="hljs-regexp">/([0-9]+)\s+file[^0-9]+?([0-9]+)?[^0-9]+?([0-9]+)?/i</span>,
+          <span class="hljs-string">'changed\t%s\nnew\t\t%s\ndeleted\t%s'</span>);
+        <span class="hljs-keyword">this</span>.warn(<span class="hljs-regexp">/(est propre|is clean)/i</span>, <span class="hljs-string">'Nothing to do'</span>);
+        sendGhAuth(<span class="hljs-keyword">this</span>);
+        <span class="hljs-keyword">this</span>.display();
+
+      }).stream(<span class="hljs-string">'git -c core.askpass=true push &lt;%=sshUrl%&gt;'</span>, <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span></span>{
+        <span class="hljs-keyword">this</span>.warn(<span class="hljs-regexp">/fatal:/</span>);
+        <span class="hljs-keyword">this</span>.success(<span class="hljs-regexp">/(est propre|is clean)/i</span>, <span class="hljs-string">'Everything up-to-date'</span>);
+        sendGhAuth(<span class="hljs-keyword">this</span>);
+        <span class="hljs-keyword">this</span>.display();
+
+      }).stream(<span class="hljs-string">'git status'</span>, <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span></span>{
+        <span class="hljs-keyword">this</span>.warn(<span class="hljs-regexp">/fatal:/</span>);
+        <span class="hljs-keyword">this</span>.success(<span class="hljs-regexp">/(est propre|is clean)/i</span>, <span class="hljs-string">'Everything up-to-date'</span>);
+        sendGhAuth(<span class="hljs-keyword">this</span>);
+        <span class="hljs-keyword">this</span>.display();
+
+        <span class="hljs-comment">/**
+         *  Clean up
+         */</span>
+      }).stream(<span class="hljs-string">'cd &lt;%=projectPath%&gt;'</span>, <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span></span>{
+        <span class="hljs-keyword">this</span>.display();
+      }).rmdir(<span class="hljs-string">'&lt;%=tmpPath%&gt;'</span>, <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span></span>{
+
+      }).run(<span class="hljs-keyword">new</span> Transport());
+
+  });</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-3">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-3">&#182;</a>
+              </div>
+              <p>endregion</p>
+
+            </div>
+            
+        </li>
+        
+        
+        <li id="section-4">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-4">&#182;</a>
+              </div>
+              <p>region Git auth and github release</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre><span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">sendGhAuth</span><span class="hljs-params">(context)</span></span>{
+  <span class="hljs-keyword">var</span> gitAuth = context.getValue(<span class="hljs-string">'gitAuth'</span>);
+  context.answer(<span class="hljs-regexp">/^Username/i</span>, gitAuth.username);
+  context.answer(<span class="hljs-regexp">/^Password/i</span>, gitAuth.password);
+}</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-5">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-5">&#182;</a>
+              </div>
+              <p>endregion</p>
+
+            </div>
+            
+        </li>
+        
+    </ul>
+  </div>
+</body>
+</html>
