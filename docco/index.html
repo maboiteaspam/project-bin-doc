@@ -189,6 +189,9 @@ program
         <span class="hljs-keyword">if</span>(machine.profileData.doc.yuidoc.themedir){
           cmd += <span class="hljs-string">'-t "'</span>+machine.profileData.doc.yuidoc.themedir+<span class="hljs-string">'" '</span>;
         }
+        <span class="hljs-keyword">if</span>(machine.profileData.doc.yuidoc.exclude){
+          cmd += <span class="hljs-string">'-x "'</span>+machine.profileData.doc.yuidoc.exclude.join(<span class="hljs-string">','</span>)+<span class="hljs-string">'" '</span>;
+        }
         <span class="hljs-keyword">if</span>(machine.profileData.doc.yuidoc.theme){
           cmd += <span class="hljs-string">'-T "'</span>+machine.profileData.doc.yuidoc.theme+<span class="hljs-string">'" '</span>;
         }
