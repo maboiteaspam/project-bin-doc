@@ -33,20 +33,25 @@ var env = !program.env?'local':program.env;
 
     _.defaults(
       machine.profileData.doc,{
-      jsdoc:{paths:[]},
-      jsdox:{paths:[]},
-      yuidoc:{paths:[]},
-      apidoc:{paths:[]},
-      docco:{paths:[]}
-    });
+        jsdoc:{paths:[]},
+        jsdox:{paths:[]},
+        yuidoc:{paths:[]},
+        apidoc:{paths:[]},
+        docco:{paths:[]}
+      });
 
     var docConfig = machine.profileData.doc;
 
     var line = new Cluc();
     line
+    /**
+     *  Prepare local environment
+     */
       .ensureFileContains('.gitignore', '\n.local.json\n')
       .ensureFileContains('.gitignore', '\n.idea/\n')
-
+    /**
+     *  Read local environment
+     */
       .readFile('./version', function(err, content){
         var rev = '-';
         var type = '-';
@@ -59,7 +64,6 @@ var env = !program.env?'local':program.env;
         }
         this.saveValue('releaseType', type);
         this.saveValue('revision', rev);
-
       }).then(function(next){
         if(!pkg.name){
           throw 'pkg.name is missing';
@@ -80,23 +84,24 @@ var env = !program.env?'local':program.env;
         this.saveValue('apidoc', docConfig.apidoc);
         this.saveValue('mocha', docConfig.mocha);
         next();
-
-      }).title('', 'Generating documentation \n' +
+      })
+      .title('', 'Generating documentation \n' +
       'on <%=ghBranch%> for <%=releaseType%> <%=revision%>')
-
+    /**
+     *  Temp directory setup
+     */
       .mktemp(pkg.name, function(err, tmpDir){
         this.display();
         this.dieOnError();
         tmpPath = tmpDir;
         this.saveValue('tmpPath', tmpPath);
-
       }).stream('cd <%=tmpPath%>', function(){
         this.display();
-
-        /**
-         *  Repository preparation
-         */
-      }).stream('git clone <%=sshUrl%> .', function(){
+      })
+    /**
+     *  Repository preparation
+     */
+      .stream('git clone <%=sshUrl%> .', function(){
         this.warn(/fatal:/);
         this.display();
       }).stream('git checkout <%=ghBranch%>', function(){
@@ -105,24 +110,28 @@ var env = !program.env?'local':program.env;
       }).stream('git checkout -b <%=ghBranch%>', function(){
         this.warn(/fatal:/);
         this.display();
-
-      }).stream('rm -fr <%=tmpPath%>/*', function(){
-      }).stream('ls -alh', function(){
+      }).stream('rm -fr <%=tmpPath%>/*')
+      .stream('ls -alh', function(){
         this.warn(/fatal:/);
         this.display();
-
-        /**
-         *  README
-         */
-      }).putFile('<%=projectPath%>/README.md', '<%=tmpPath%>/README.md', function(){
+      })
+    /**
+     *  README
+     */
+      .putFile('<%=projectPath%>/README.md', '<%=tmpPath%>/README.md', function(){
         this.warn(/fatal:/);
         this.success(/(est propre|is clean)/i, 'Everything up-to-date');
         this.display();
 
-        /**
-         *  JsDox
-         */
-      }).skip(docConfig.jsdox.paths.length)
+      })
+    /**
+     *  JsDox
+     */
+      .skip(docConfig.jsdox.paths.length)
+      .each(docConfig.jsdox.paths, function(from, to){
+        line.ensureEmptyDir('<%=tmpPath%>/'+to);
+      })
+      .skip(docConfig.jsdox.paths.length)
       .each(docConfig.jsdox.paths, function(from, to){
         line.stream('jsdox -r --output <%=tmpPath%>/'+to+' <%=projectPath%>/'+from, function(){
           this.spinUntil(/.+/);
@@ -130,10 +139,17 @@ var env = !program.env?'local':program.env;
           this.display();
         });
 
-        /**
-         *  JsDoc
-         */
-      }).skip(docConfig.jsdoc.paths.length)
+      })
+
+
+    /**
+     *  JsDoc
+     */
+      .skip(docConfig.jsdoc.paths.length)
+      .each(docConfig.jsdoc.paths, function(from, to){
+        line.ensureEmptyDir('<%=tmpPath%>/'+to);
+      })
+      .skip(docConfig.jsdoc.paths.length)
       .each(docConfig.jsdoc.paths, function(from, to){
         line.stream('jsdoc -r <%=projectPath%>/'+from+' -d <%=tmpPath%>/'+to, function(){
           this.spinUntil(/.+/);
@@ -141,10 +157,16 @@ var env = !program.env?'local':program.env;
           this.display();
         });
 
-        /**
-         *  YuiDoc
-         */
-      }).skip(docConfig.yuidoc.paths.length)
+      })
+
+    /**
+     *  YuiDoc
+     */
+      .skip(docConfig.yuidoc.paths.length)
+      .each(docConfig.yuidoc.paths, function(from, to){
+        line.ensureEmptyDir('<%=tmpPath%>/'+to);
+      })
+      .skip(docConfig.yuidoc.paths.length)
       .each(docConfig.yuidoc.paths, function(from, to){
         var cmd = 'yuidoc ';
         cmd += '-o <%=tmpPath%>/'+to+' ';
@@ -174,10 +196,16 @@ var env = !program.env?'local':program.env;
           this.display();
         });
 
-        /**
-         *  docco
-         */
-      }).skip(docConfig.docco.paths.length)
+      })
+
+    /**
+     *  docco
+     */
+      .skip(docConfig.docco.paths.length)
+      .each(docConfig.docco.paths, function(from, to){
+        line.ensureEmptyDir('<%=tmpPath%>/'+to);
+      })
+      .skip(docConfig.docco.paths.length)
       .each(docConfig.docco.paths, function(from, to){
         var cmd = 'docco ';
         cmd += '-o <%=tmpPath%>/'+to+' ';
@@ -202,11 +230,17 @@ var env = !program.env?'local':program.env;
           this.success('completed');
           this.display();
         });
+      })
 
-        /**
-         *  apidoc
-         */
-      }).skip(docConfig.apidoc.paths.length)
+
+    /**
+     *  apidoc
+     */
+      .skip(docConfig.apidoc.paths.length)
+      .each(docConfig.apidoc.paths, function(from, to){
+        line.ensureEmptyDir('<%=tmpPath%>/'+to);
+      })
+      .skip(docConfig.apidoc.paths.length)
       .each(docConfig.apidoc.paths, function(from, to){
         var cmd = 'apidoc ';
         if(docConfig.apidoc.filters){
@@ -222,22 +256,23 @@ var env = !program.env?'local':program.env;
           this.success('completed');
           this.display();
         });
+      })
 
-        /**
-         *  MOCHA
-         */
-      }).stream('cd <%=projectPath%>', function(){
-      }).skip(!docConfig.mocha)
+    /**
+     *  MOCHA
+     */
+      .stream('cd <%=projectPath%>')
+      .skip(!docConfig.mocha)
       .stream('mocha --reporter markdown > <%=tmpPath%>/mocha-toc.md', function(){
         this.spinUntil(/.+/);
         this.success('completed');
         this.display();
-      }).stream('cd <%=tmpPath%>', function(){
-
-        /**
-         *  Git commit and push
-         */
-      }).stream('git add -A', function(){
+      })
+    /**
+     *  Git commit and push
+     */
+      .stream('cd <%=tmpPath%>')
+      .stream('git add -A', function(){
         this.display();
         sendGhAuth(this);
 
@@ -261,15 +296,14 @@ var env = !program.env?'local':program.env;
         this.success(/(est propre|is clean)/i, 'Everything up-to-date');
         sendGhAuth(this);
         this.display();
-
-        /**
-         *  Clean up
-         */
-      }).stream('cd <%=projectPath%>', function(){
+      })
+    /**
+     *  Clean up
+     */
+      .stream('cd <%=projectPath%>', function(){
         this.display();
-      }).rmdir('<%=tmpPath%>', function(){
-
-      }).run(new Transport());
+      }).rmdir('<%=tmpPath%>')
+      .run(new Transport());
 
   });
 
