@@ -90,19 +90,16 @@ var env = !program.env?'local':program.env;
       }).stream('git checkout -b <%=ghBranch%>', function(){
         this.warn(/fatal:/);
         this.display();
+
+      }).stream('rm -fr <%=tmpPath%>/*', function(){
       }).stream('ls -alh', function(){
         this.warn(/fatal:/);
-        this.display();
-
-      }).stream('git status', function(){
-        this.warn(/fatal:/);
-        this.success(/(est propre|is clean)/i, 'Everything up-to-date');
         this.display();
 
         /**
          *  README
          */
-      }).putFile('<%=projectPath%>/README.md', '.', function(){
+      }).putFile('<%=projectPath%>/README.md', '<%=tmpPath%>/README.md', function(){
         this.warn(/fatal:/);
         this.success(/(est propre|is clean)/i, 'Everything up-to-date');
         this.display();
@@ -123,7 +120,7 @@ var env = !program.env?'local':program.env;
          */
       }).skip(!machine.profileData.doc.jsdoc)
       .each(machine.profileData.doc.jsdoc, function(from, to){
-        line.stream('jsdoc -r <%=projectPath%>/'+from+' <%=tmpPath%>/'+to, function(){
+        line.stream('jsdoc -r <%=projectPath%>/'+from+' -d <%=tmpPath%>/'+to, function(){
           this.spinUntil(/.+/);
           this.success('completed');
           this.display();
