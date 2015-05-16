@@ -1,6 +1,6 @@
 {
   "name": "project-bin-doc",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "Generate documentation of your project and push it to a git branch.",
   "main": "index.js",
   "scripts": {

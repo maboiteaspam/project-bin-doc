@@ -122,7 +122,7 @@ var env = !program.env?'local':program.env;
         /**
          *  JsDox
          */
-      }).skip(!docConfig.jsdox.paths.length)
+      }).skip(docConfig.jsdox.paths.length)
       .each(docConfig.jsdox.paths, function(from, to){
         line.stream('jsdox -r --output <%=tmpPath%>/'+to+' <%=projectPath%>/'+from, function(){
           this.spinUntil(/.+/);
@@ -133,7 +133,7 @@ var env = !program.env?'local':program.env;
         /**
          *  JsDoc
          */
-      }).skip(!docConfig.jsdoc.paths.length)
+      }).skip(docConfig.jsdoc.paths.length)
       .each(docConfig.jsdoc.paths, function(from, to){
         line.stream('jsdoc -r <%=projectPath%>/'+from+' -d <%=tmpPath%>/'+to, function(){
           this.spinUntil(/.+/);
@@ -144,7 +144,7 @@ var env = !program.env?'local':program.env;
         /**
          *  YuiDoc
          */
-      }).skip(!docConfig.yuidoc.paths.length)
+      }).skip(docConfig.yuidoc.paths.length)
       .each(docConfig.yuidoc.paths, function(from, to){
         var cmd = 'yuidoc ';
         cmd += '-o <%=tmpPath%>/'+to+' ';
@@ -177,7 +177,7 @@ var env = !program.env?'local':program.env;
         /**
          *  docco
          */
-      }).skip(!docConfig.docco.paths.length)
+      }).skip(docConfig.docco.paths.length)
       .each(docConfig.docco.paths, function(from, to){
         var cmd = 'docco ';
         cmd += '-o <%=tmpPath%>/'+to+' ';
@@ -206,7 +206,7 @@ var env = !program.env?'local':program.env;
         /**
          *  apidoc
          */
-      }).skip(!docConfig.apidoc.paths.length)
+      }).skip(docConfig.apidoc.paths.length)
       .each(docConfig.apidoc.paths, function(from, to){
         var cmd = 'apidoc ';
         if(docConfig.apidoc.filters){
