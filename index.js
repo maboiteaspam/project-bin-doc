@@ -63,6 +63,9 @@ var env = !program.env?'local':program.env;
         this.saveValue('ghBranch', machine.profileData.doc.ghBranch);
         this.saveValue('jsdox', machine.profileData.doc.jsdox);
         this.saveValue('jsdoc', machine.profileData.doc.jsdoc);
+        this.saveValue('yuidoc', machine.profileData.doc.yuidoc);
+        this.saveValue('docco', machine.profileData.doc.docco);
+        this.saveValue('apidoc', machine.profileData.doc.apidoc);
         this.saveValue('mocha', machine.profileData.doc.mocha);
         next();
 
@@ -121,6 +124,39 @@ var env = !program.env?'local':program.env;
       }).skip(!machine.profileData.doc.jsdoc)
       .each(machine.profileData.doc.jsdoc, function(from, to){
         line.stream('jsdoc -r <%=projectPath%>/'+from+' -d <%=tmpPath%>/'+to, function(){
+          this.spinUntil(/.+/);
+          this.success('completed');
+          this.display();
+        });
+
+        /**
+         *  YuiDoc
+         */
+      }).skip(!machine.profileData.doc.yuidoc)
+      .each(machine.profileData.doc.yuidoc, function(from, to){
+        line.stream('yuidoc -o <%=tmpPath%>/'+to+' -c <%=projectPath%>/package.json <%=projectPath%>/'+from, function(){
+          this.spinUntil(/.+/);
+          this.success('completed');
+          this.display();
+        });
+
+        /**
+         *  docco
+         */
+      }).skip(!machine.profileData.doc.docco)
+      .each(machine.profileData.doc.docco, function(from, to){
+        line.stream('docco -o <%=tmpPath%>/'+to+' <%=projectPath%>/'+from, function(){
+          this.spinUntil(/.+/);
+          this.success('completed');
+          this.display();
+        });
+
+        /**
+         *  apidoc
+         */
+      }).skip(!machine.profileData.doc.apidoc)
+      .each(machine.profileData.doc.apidoc, function(from, to){
+        line.stream('apidoc -o <%=tmpPath%>/'+to+' <%=projectPath%>/'+from, function(){
           this.spinUntil(/.+/);
           this.success('completed');
           this.display();
