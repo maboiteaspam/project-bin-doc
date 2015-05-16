@@ -1,6 +1,7 @@
 #!/usr/bin/env node
 
 var path = require('path');
+var _ = require('underscore');
 var _s = require('underscore.string');
 var program = require('commander');
 var Config = require("project-bin-config");
