@@ -111,7 +111,7 @@ var env = !program.env?'local':program.env;
          *  JsDox
          */
       }).skip(!machine.profileData.doc.jsdox)
-      .each(machine.profileData.doc.jsdox, function(from, to){
+      .each(machine.profileData.doc.jsdox.paths, function(from, to){
         line.stream('jsdox -r --output <%=tmpPath%>/'+to+' <%=projectPath%>/'+from, function(){
           this.spinUntil(/.+/);
           this.success('completed');
@@ -122,7 +122,7 @@ var env = !program.env?'local':program.env;
          *  JsDoc
          */
       }).skip(!machine.profileData.doc.jsdoc)
-      .each(machine.profileData.doc.jsdoc, function(from, to){
+      .each(machine.profileData.doc.jsdoc.paths, function(from, to){
         line.stream('jsdoc -r <%=projectPath%>/'+from+' -d <%=tmpPath%>/'+to, function(){
           this.spinUntil(/.+/);
           this.success('completed');
@@ -133,8 +133,27 @@ var env = !program.env?'local':program.env;
          *  YuiDoc
          */
       }).skip(!machine.profileData.doc.yuidoc)
-      .each(machine.profileData.doc.yuidoc, function(from, to){
-        line.stream('yuidoc -o <%=tmpPath%>/'+to+' -c <%=projectPath%>/package.json -x node_modules <%=projectPath%>/'+from, function(){
+      .each(machine.profileData.doc.yuidoc.paths, function(from, to){
+        var cmd = 'yuidoc ';
+        cmd += '-o <%=tmpPath%>/'+to+' ';
+        cmd += '-c <%=projectPath%>/package.json ';
+        if(machine.profileData.doc.yuidoc.selleck){
+          cmd += '--selleck ';
+        }
+        if(machine.profileData.doc.yuidoc.lint){
+          cmd += '--lint ';
+        }
+        if(machine.profileData.doc.yuidoc.themedir){
+          cmd += '-t "'+machine.profileData.doc.yuidoc.themedir+'" ';
+        }
+        if(machine.profileData.doc.yuidoc.theme){
+          cmd += '-T "'+machine.profileData.doc.yuidoc.theme+'" ';
+        }
+        if(machine.profileData.doc.yuidoc.syntaxtype){
+          cmd += '--syntaxtype "'+machine.profileData.doc.yuidoc.syntaxtype+'" ';
+        }
+        cmd += '<%=projectPath%>/'+from+' ';
+        line.stream(cmd, function(){
           this.spinUntil(/.+/);
           this.success('completed');
           this.display();
@@ -144,8 +163,26 @@ var env = !program.env?'local':program.env;
          *  docco
          */
       }).skip(!machine.profileData.doc.docco)
-      .each(machine.profileData.doc.docco, function(from, to){
-        line.stream('docco -o <%=tmpPath%>/'+to+' <%=projectPath%>/'+from, function(){
+      .each(machine.profileData.doc.docco.paths, function(from, to){
+        var cmd = 'docco ';
+        cmd += '-o <%=tmpPath%>/'+to+' ';
+        if(machine.profileData.doc.docco.layout){
+          cmd += '-l "'+machine.profileData.doc.docco.layout+'" ';
+        }
+        if(machine.profileData.doc.docco.template){
+          cmd += '-t "'+machine.profileData.doc.docco.template+'" ';
+        }
+        if(machine.profileData.doc.docco.extension){
+          cmd += '-e "'+machine.profileData.doc.docco.extension+'" ';
+        }
+        if(machine.profileData.doc.docco.languages){
+          cmd += '-l "'+machine.profileData.doc.docco.languages+'" ';
+        }
+        if(machine.profileData.doc.docco.marked){
+          cmd += '-m "'+machine.profileData.doc.docco.marked+'" ';
+        }
+        cmd += '<%=projectPath%>/'+from+' ';
+        line.stream(cmd, function(){
           this.spinUntil(/.+/);
           this.success('completed');
           this.display();
@@ -155,8 +192,17 @@ var env = !program.env?'local':program.env;
          *  apidoc
          */
       }).skip(!machine.profileData.doc.apidoc)
-      .each(machine.profileData.doc.apidoc, function(from, to){
-        line.stream('apidoc -o <%=tmpPath%>/'+to+' <%=projectPath%>/'+from, function(){
+      .each(machine.profileData.doc.apidoc.paths, function(from, to){
+        var cmd = 'apidoc ';
+        if(machine.profileData.doc.apidoc.filters){
+          cmd += '-f "'+machine.profileData.doc.apidoc.filters+'" ';
+        }
+        if(machine.profileData.doc.apidoc.template){
+          cmd += '-t "'+machine.profileData.doc.apidoc.template+'" ';
+        }
+        cmd += '-o <%=tmpPath%>/'+to+' ';
+        cmd += '-i <%=projectPath%>/'+from+' ';
+        line.stream(cmd, function(){
           this.spinUntil(/.+/);
           this.success('completed');
           this.display();

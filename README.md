@@ -36,19 +36,31 @@ Create a ```.local.json``` file on root directory of your project.
     "doc":{
       "ghBranch":"TO UPDATE",
       "jsdox":{
-        "index.js":"docs/"
+        "paths":{
+          "index.js":"jsdox/"
+        }
       },
       "jsdoc":{
-        "index.js":"docs/"
+        "paths":{
+          "index.js":"jsdoc/"
+        }
       },
       "yuidoc":{
-        "*":"yuidoc/"
+        "paths":{
+          "*":"yuidoc/"
+        }
       },
       "docco":{
-        "index.js":"docco/"
+        "paths":{
+          "index.js":"docco/"
+        }
       },
       "apidoc":{
-        "index.js":"apidoc/"
+        "paths":{
+          "index.js":"apidoc/"
+        },
+        "filters":".*\\.js$",
+        "template":"mytemplate/"
       },
       "mocha": true
     }
