@@ -14,105 +14,135 @@
     "classitems": [
         {
             "file": "/home/maboiteaspam/Bureau/project-bin-doc/index.js",
-            "line": 96,
+            "line": 47,
+            "description": "Prepare local environment",
+            "class": ""
+        },
+        {
+            "file": "/home/maboiteaspam/Bureau/project-bin-doc/index.js",
+            "line": 52,
+            "description": "Read local environment",
+            "class": ""
+        },
+        {
+            "file": "/home/maboiteaspam/Bureau/project-bin-doc/index.js",
+            "line": 90,
+            "description": "Temp directory setup",
+            "class": ""
+        },
+        {
+            "file": "/home/maboiteaspam/Bureau/project-bin-doc/index.js",
+            "line": 101,
             "description": "Repository preparation",
             "class": ""
         },
         {
             "file": "/home/maboiteaspam/Bureau/project-bin-doc/index.js",
-            "line": 114,
+            "line": 118,
             "description": "README",
             "class": ""
         },
         {
             "file": "/home/maboiteaspam/Bureau/project-bin-doc/index.js",
-            "line": 122,
+            "line": 127,
             "description": "JsDox",
             "class": ""
         },
         {
             "file": "/home/maboiteaspam/Bureau/project-bin-doc/index.js",
-            "line": 133,
+            "line": 145,
             "description": "JsDoc",
             "class": ""
         },
         {
             "file": "/home/maboiteaspam/Bureau/project-bin-doc/index.js",
-            "line": 144,
+            "line": 162,
             "description": "YuiDoc",
             "class": ""
         },
         {
             "file": "/home/maboiteaspam/Bureau/project-bin-doc/index.js",
-            "line": 177,
+            "line": 201,
             "description": "docco",
             "class": ""
         },
         {
             "file": "/home/maboiteaspam/Bureau/project-bin-doc/index.js",
-            "line": 206,
+            "line": 236,
             "description": "apidoc",
             "class": ""
         },
         {
             "file": "/home/maboiteaspam/Bureau/project-bin-doc/index.js",
-            "line": 226,
+            "line": 261,
             "description": "MOCHA",
             "class": ""
         },
         {
             "file": "/home/maboiteaspam/Bureau/project-bin-doc/index.js",
-            "line": 237,
+            "line": 271,
             "description": "Git commit and push",
             "class": ""
         },
         {
             "file": "/home/maboiteaspam/Bureau/project-bin-doc/index.js",
-            "line": 265,
+            "line": 300,
             "description": "Clean up",
             "class": ""
         }
     ],
     "warnings": [
         {
+            "message": "Missing item type\nPrepare local environment",
+            "line": " /home/maboiteaspam/Bureau/project-bin-doc/index.js:47"
+        },
+        {
+            "message": "Missing item type\nRead local environment",
+            "line": " /home/maboiteaspam/Bureau/project-bin-doc/index.js:52"
+        },
+        {
+            "message": "Missing item type\nTemp directory setup",
+            "line": " /home/maboiteaspam/Bureau/project-bin-doc/index.js:90"
+        },
+        {
             "message": "Missing item type\nRepository preparation",
-            "line": " /home/maboiteaspam/Bureau/project-bin-doc/index.js:96"
+            "line": " /home/maboiteaspam/Bureau/project-bin-doc/index.js:101"
         },
         {
             "message": "Missing item type\nREADME",
-            "line": " /home/maboiteaspam/Bureau/project-bin-doc/index.js:114"
+            "line": " /home/maboiteaspam/Bureau/project-bin-doc/index.js:118"
         },
         {
             "message": "Missing item type\nJsDox",
-            "line": " /home/maboiteaspam/Bureau/project-bin-doc/index.js:122"
+            "line": " /home/maboiteaspam/Bureau/project-bin-doc/index.js:127"
         },
         {
             "message": "Missing item type\nJsDoc",
-            "line": " /home/maboiteaspam/Bureau/project-bin-doc/index.js:133"
+            "line": " /home/maboiteaspam/Bureau/project-bin-doc/index.js:145"
         },
         {
             "message": "Missing item type\nYuiDoc",
-            "line": " /home/maboiteaspam/Bureau/project-bin-doc/index.js:144"
+            "line": " /home/maboiteaspam/Bureau/project-bin-doc/index.js:162"
         },
         {
             "message": "Missing item type\ndocco",
-            "line": " /home/maboiteaspam/Bureau/project-bin-doc/index.js:177"
+            "line": " /home/maboiteaspam/Bureau/project-bin-doc/index.js:201"
         },
         {
             "message": "Missing item type\napidoc",
-            "line": " /home/maboiteaspam/Bureau/project-bin-doc/index.js:206"
+            "line": " /home/maboiteaspam/Bureau/project-bin-doc/index.js:236"
         },
         {
             "message": "Missing item type\nMOCHA",
-            "line": " /home/maboiteaspam/Bureau/project-bin-doc/index.js:226"
+            "line": " /home/maboiteaspam/Bureau/project-bin-doc/index.js:261"
         },
         {
             "message": "Missing item type\nGit commit and push",
-            "line": " /home/maboiteaspam/Bureau/project-bin-doc/index.js:237"
+            "line": " /home/maboiteaspam/Bureau/project-bin-doc/index.js:271"
         },
         {
             "message": "Missing item type\nClean up",
-            "line": " /home/maboiteaspam/Bureau/project-bin-doc/index.js:265"
+            "line": " /home/maboiteaspam/Bureau/project-bin-doc/index.js:300"
         }
     ]
 }

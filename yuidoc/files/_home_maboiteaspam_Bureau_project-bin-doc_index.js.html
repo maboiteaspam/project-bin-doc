@@ -113,20 +113,25 @@ var env = !program.env?&#x27;local&#x27;:program.env;
 
     _.defaults(
       machine.profileData.doc,{
-      jsdoc:{paths:[]},
-      jsdox:{paths:[]},
-      yuidoc:{paths:[]},
-      apidoc:{paths:[]},
-      docco:{paths:[]}
-    });
+        jsdoc:{paths:[]},
+        jsdox:{paths:[]},
+        yuidoc:{paths:[]},
+        apidoc:{paths:[]},
+        docco:{paths:[]}
+      });
 
     var docConfig = machine.profileData.doc;
 
     var line = new Cluc();
     line
+    /**
+     *  Prepare local environment
+     */
       .ensureFileContains(&#x27;.gitignore&#x27;, &#x27;\n.local.json\n&#x27;)
       .ensureFileContains(&#x27;.gitignore&#x27;, &#x27;\n.idea/\n&#x27;)
-
+    /**
+     *  Read local environment
+     */
       .readFile(&#x27;./version&#x27;, function(err, content){
         var rev = &#x27;-&#x27;;
         var type = &#x27;-&#x27;;
@@ -139,7 +144,6 @@ var env = !program.env?&#x27;local&#x27;:program.env;
         }
         this.saveValue(&#x27;releaseType&#x27;, type);
         this.saveValue(&#x27;revision&#x27;, rev);
-
       }).then(function(next){
         if(!pkg.name){
           throw &#x27;pkg.name is missing&#x27;;
@@ -160,23 +164,24 @@ var env = !program.env?&#x27;local&#x27;:program.env;
         this.saveValue(&#x27;apidoc&#x27;, docConfig.apidoc);
         this.saveValue(&#x27;mocha&#x27;, docConfig.mocha);
         next();
-
-      }).title(&#x27;&#x27;, &#x27;Generating documentation \n&#x27; +
+      })
+      .title(&#x27;&#x27;, &#x27;Generating documentation \n&#x27; +
       &#x27;on &lt;%=ghBranch%&gt; for &lt;%=releaseType%&gt; &lt;%=revision%&gt;&#x27;)
-
+    /**
+     *  Temp directory setup
+     */
       .mktemp(pkg.name, function(err, tmpDir){
         this.display();
         this.dieOnError();
         tmpPath = tmpDir;
         this.saveValue(&#x27;tmpPath&#x27;, tmpPath);
-
       }).stream(&#x27;cd &lt;%=tmpPath%&gt;&#x27;, function(){
         this.display();
-
-        /**
-         *  Repository preparation
-         */
-      }).stream(&#x27;git clone &lt;%=sshUrl%&gt; .&#x27;, function(){
+      })
+    /**
+     *  Repository preparation
+     */
+      .stream(&#x27;git clone &lt;%=sshUrl%&gt; .&#x27;, function(){
         this.warn(/fatal:/);
         this.display();
       }).stream(&#x27;git checkout &lt;%=ghBranch%&gt;&#x27;, function(){
@@ -185,24 +190,28 @@ var env = !program.env?&#x27;local&#x27;:program.env;
       }).stream(&#x27;git checkout -b &lt;%=ghBranch%&gt;&#x27;, function(){
         this.warn(/fatal:/);
         this.display();
-
-      }).stream(&#x27;rm -fr &lt;%=tmpPath%&gt;/*&#x27;, function(){
-      }).stream(&#x27;ls -alh&#x27;, function(){
+      }).stream(&#x27;rm -fr &lt;%=tmpPath%&gt;/*&#x27;)
+      .stream(&#x27;ls -alh&#x27;, function(){
         this.warn(/fatal:/);
         this.display();
-
-        /**
-         *  README
-         */
-      }).putFile(&#x27;&lt;%=projectPath%&gt;/README.md&#x27;, &#x27;&lt;%=tmpPath%&gt;/README.md&#x27;, function(){
+      })
+    /**
+     *  README
+     */
+      .putFile(&#x27;&lt;%=projectPath%&gt;/README.md&#x27;, &#x27;&lt;%=tmpPath%&gt;/README.md&#x27;, function(){
         this.warn(/fatal:/);
         this.success(/(est propre|is clean)/i, &#x27;Everything up-to-date&#x27;);
         this.display();
 
-        /**
-         *  JsDox
-         */
-      }).skip(docConfig.jsdox.paths.length)
+      })
+    /**
+     *  JsDox
+     */
+      .skip(docConfig.jsdox.paths.length)
+      .each(docConfig.jsdox.paths, function(from, to){
+        line.ensureEmptyDir(&#x27;&lt;%=tmpPath%&gt;/&#x27;+to);
+      })
+      .skip(docConfig.jsdox.paths.length)
       .each(docConfig.jsdox.paths, function(from, to){
         line.stream(&#x27;jsdox -r --output &lt;%=tmpPath%&gt;/&#x27;+to+&#x27; &lt;%=projectPath%&gt;/&#x27;+from, function(){
           this.spinUntil(/.+/);
@@ -210,10 +219,17 @@ var env = !program.env?&#x27;local&#x27;:program.env;
           this.display();
         });
 
-        /**
-         *  JsDoc
-         */
-      }).skip(docConfig.jsdoc.paths.length)
+      })
+
+
+    /**
+     *  JsDoc
+     */
+      .skip(docConfig.jsdoc.paths.length)
+      .each(docConfig.jsdoc.paths, function(from, to){
+        line.ensureEmptyDir(&#x27;&lt;%=tmpPath%&gt;/&#x27;+to);
+      })
+      .skip(docConfig.jsdoc.paths.length)
       .each(docConfig.jsdoc.paths, function(from, to){
         line.stream(&#x27;jsdoc -r &lt;%=projectPath%&gt;/&#x27;+from+&#x27; -d &lt;%=tmpPath%&gt;/&#x27;+to, function(){
           this.spinUntil(/.+/);
@@ -221,10 +237,16 @@ var env = !program.env?&#x27;local&#x27;:program.env;
           this.display();
         });
 
-        /**
-         *  YuiDoc
-         */
-      }).skip(docConfig.yuidoc.paths.length)
+      })
+
+    /**
+     *  YuiDoc
+     */
+      .skip(docConfig.yuidoc.paths.length)
+      .each(docConfig.yuidoc.paths, function(from, to){
+        line.ensureEmptyDir(&#x27;&lt;%=tmpPath%&gt;/&#x27;+to);
+      })
+      .skip(docConfig.yuidoc.paths.length)
       .each(docConfig.yuidoc.paths, function(from, to){
         var cmd = &#x27;yuidoc &#x27;;
         cmd += &#x27;-o &lt;%=tmpPath%&gt;/&#x27;+to+&#x27; &#x27;;
@@ -254,10 +276,16 @@ var env = !program.env?&#x27;local&#x27;:program.env;
           this.display();
         });
 
-        /**
-         *  docco
-         */
-      }).skip(docConfig.docco.paths.length)
+      })
+
+    /**
+     *  docco
+     */
+      .skip(docConfig.docco.paths.length)
+      .each(docConfig.docco.paths, function(from, to){
+        line.ensureEmptyDir(&#x27;&lt;%=tmpPath%&gt;/&#x27;+to);
+      })
+      .skip(docConfig.docco.paths.length)
       .each(docConfig.docco.paths, function(from, to){
         var cmd = &#x27;docco &#x27;;
         cmd += &#x27;-o &lt;%=tmpPath%&gt;/&#x27;+to+&#x27; &#x27;;
@@ -282,11 +310,17 @@ var env = !program.env?&#x27;local&#x27;:program.env;
           this.success(&#x27;completed&#x27;);
           this.display();
         });
+      })
 
-        /**
-         *  apidoc
-         */
-      }).skip(docConfig.apidoc.paths.length)
+
+    /**
+     *  apidoc
+     */
+      .skip(docConfig.apidoc.paths.length)
+      .each(docConfig.apidoc.paths, function(from, to){
+        line.ensureEmptyDir(&#x27;&lt;%=tmpPath%&gt;/&#x27;+to);
+      })
+      .skip(docConfig.apidoc.paths.length)
       .each(docConfig.apidoc.paths, function(from, to){
         var cmd = &#x27;apidoc &#x27;;
         if(docConfig.apidoc.filters){
@@ -302,22 +336,23 @@ var env = !program.env?&#x27;local&#x27;:program.env;
           this.success(&#x27;completed&#x27;);
           this.display();
         });
+      })
 
-        /**
-         *  MOCHA
-         */
-      }).stream(&#x27;cd &lt;%=projectPath%&gt;&#x27;, function(){
-      }).skip(!docConfig.mocha)
+    /**
+     *  MOCHA
+     */
+      .stream(&#x27;cd &lt;%=projectPath%&gt;&#x27;)
+      .skip(!docConfig.mocha)
       .stream(&#x27;mocha --reporter markdown &gt; &lt;%=tmpPath%&gt;/mocha-toc.md&#x27;, function(){
         this.spinUntil(/.+/);
         this.success(&#x27;completed&#x27;);
         this.display();
-      }).stream(&#x27;cd &lt;%=tmpPath%&gt;&#x27;, function(){
-
-        /**
-         *  Git commit and push
-         */
-      }).stream(&#x27;git add -A&#x27;, function(){
+      })
+    /**
+     *  Git commit and push
+     */
+      .stream(&#x27;cd &lt;%=tmpPath%&gt;&#x27;)
+      .stream(&#x27;git add -A&#x27;, function(){
         this.display();
         sendGhAuth(this);
 
@@ -341,15 +376,14 @@ var env = !program.env?&#x27;local&#x27;:program.env;
         this.success(/(est propre|is clean)/i, &#x27;Everything up-to-date&#x27;);
         sendGhAuth(this);
         this.display();
-
-        /**
-         *  Clean up
-         */
-      }).stream(&#x27;cd &lt;%=projectPath%&gt;&#x27;, function(){
+      })
+    /**
+     *  Clean up
+     */
+      .stream(&#x27;cd &lt;%=projectPath%&gt;&#x27;, function(){
         this.display();
-      }).rmdir(&#x27;&lt;%=tmpPath%&gt;&#x27;, function(){
-
-      }).run(new Transport());
+      }).rmdir(&#x27;&lt;%=tmpPath%&gt;&#x27;)
+      .run(new Transport());
 
   });
 
