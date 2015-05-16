@@ -153,10 +153,6 @@ program
       }).stream(<span class="hljs-string">'git checkout -b &lt;%=ghBranch%&gt;'</span>, <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span></span>{
         <span class="hljs-keyword">this</span>.warn(<span class="hljs-regexp">/fatal:/</span>);
         <span class="hljs-keyword">this</span>.display();
-      }).stream(<span class="hljs-string">'rm -fr &lt;%=tmpPath%&gt;/*'</span>)
-      .stream(<span class="hljs-string">'ls -alh'</span>, <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span></span>{
-        <span class="hljs-keyword">this</span>.warn(<span class="hljs-regexp">/fatal:/</span>);
-        <span class="hljs-keyword">this</span>.display();
       })
     <span class="hljs-comment">/**
      *  README

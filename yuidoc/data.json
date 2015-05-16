@@ -38,55 +38,55 @@
         },
         {
             "file": "/home/maboiteaspam/Bureau/project-bin-doc/index.js",
-            "line": 118,
+            "line": 114,
             "description": "README",
             "class": ""
         },
         {
             "file": "/home/maboiteaspam/Bureau/project-bin-doc/index.js",
-            "line": 127,
+            "line": 123,
             "description": "JsDox",
             "class": ""
         },
         {
             "file": "/home/maboiteaspam/Bureau/project-bin-doc/index.js",
-            "line": 145,
+            "line": 141,
             "description": "JsDoc",
             "class": ""
         },
         {
             "file": "/home/maboiteaspam/Bureau/project-bin-doc/index.js",
-            "line": 162,
+            "line": 158,
             "description": "YuiDoc",
             "class": ""
         },
         {
             "file": "/home/maboiteaspam/Bureau/project-bin-doc/index.js",
-            "line": 201,
+            "line": 197,
             "description": "docco",
             "class": ""
         },
         {
             "file": "/home/maboiteaspam/Bureau/project-bin-doc/index.js",
-            "line": 236,
+            "line": 232,
             "description": "apidoc",
             "class": ""
         },
         {
             "file": "/home/maboiteaspam/Bureau/project-bin-doc/index.js",
-            "line": 261,
+            "line": 257,
             "description": "MOCHA",
             "class": ""
         },
         {
             "file": "/home/maboiteaspam/Bureau/project-bin-doc/index.js",
-            "line": 271,
+            "line": 267,
             "description": "Git commit and push",
             "class": ""
         },
         {
             "file": "/home/maboiteaspam/Bureau/project-bin-doc/index.js",
-            "line": 300,
+            "line": 296,
             "description": "Clean up",
             "class": ""
         }
@@ -110,39 +110,39 @@
         },
         {
             "message": "Missing item type\nREADME",
-            "line": " /home/maboiteaspam/Bureau/project-bin-doc/index.js:118"
+            "line": " /home/maboiteaspam/Bureau/project-bin-doc/index.js:114"
         },
         {
             "message": "Missing item type\nJsDox",
-            "line": " /home/maboiteaspam/Bureau/project-bin-doc/index.js:127"
+            "line": " /home/maboiteaspam/Bureau/project-bin-doc/index.js:123"
         },
         {
             "message": "Missing item type\nJsDoc",
-            "line": " /home/maboiteaspam/Bureau/project-bin-doc/index.js:145"
+            "line": " /home/maboiteaspam/Bureau/project-bin-doc/index.js:141"
         },
         {
             "message": "Missing item type\nYuiDoc",
-            "line": " /home/maboiteaspam/Bureau/project-bin-doc/index.js:162"
+            "line": " /home/maboiteaspam/Bureau/project-bin-doc/index.js:158"
         },
         {
             "message": "Missing item type\ndocco",
-            "line": " /home/maboiteaspam/Bureau/project-bin-doc/index.js:201"
+            "line": " /home/maboiteaspam/Bureau/project-bin-doc/index.js:197"
         },
         {
             "message": "Missing item type\napidoc",
-            "line": " /home/maboiteaspam/Bureau/project-bin-doc/index.js:236"
+            "line": " /home/maboiteaspam/Bureau/project-bin-doc/index.js:232"
         },
         {
             "message": "Missing item type\nMOCHA",
-            "line": " /home/maboiteaspam/Bureau/project-bin-doc/index.js:261"
+            "line": " /home/maboiteaspam/Bureau/project-bin-doc/index.js:257"
         },
         {
             "message": "Missing item type\nGit commit and push",
-            "line": " /home/maboiteaspam/Bureau/project-bin-doc/index.js:271"
+            "line": " /home/maboiteaspam/Bureau/project-bin-doc/index.js:267"
         },
         {
             "message": "Missing item type\nClean up",
-            "line": " /home/maboiteaspam/Bureau/project-bin-doc/index.js:300"
+            "line": " /home/maboiteaspam/Bureau/project-bin-doc/index.js:296"
         }
     ]
 }

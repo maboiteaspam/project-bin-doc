@@ -190,10 +190,6 @@ var env = !program.env?&#x27;local&#x27;:program.env;
       }).stream(&#x27;git checkout -b &lt;%=ghBranch%&gt;&#x27;, function(){
         this.warn(/fatal:/);
         this.display();
-      }).stream(&#x27;rm -fr &lt;%=tmpPath%&gt;/*&#x27;)
-      .stream(&#x27;ls -alh&#x27;, function(){
-        this.warn(/fatal:/);
-        this.display();
       })
     /**
      *  README
