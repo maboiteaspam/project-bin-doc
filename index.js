@@ -134,7 +134,7 @@ var env = !program.env?'local':program.env;
          */
       }).skip(!machine.profileData.doc.yuidoc)
       .each(machine.profileData.doc.yuidoc, function(from, to){
-        line.stream('yuidoc -o <%=tmpPath%>/'+to+' -c <%=projectPath%>/package.json <%=projectPath%>/'+from, function(){
+        line.stream('yuidoc -o <%=tmpPath%>/'+to+' -c <%=projectPath%>/package.json -x node_modules <%=projectPath%>/'+from, function(){
           this.spinUntil(/.+/);
           this.success('completed');
           this.display();

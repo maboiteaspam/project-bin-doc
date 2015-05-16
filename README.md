@@ -42,7 +42,7 @@ Create a ```.local.json``` file on root directory of your project.
         "index.js":"docs/"
       },
       "yuidoc":{
-        "**":"yuidoc/"
+        "*":"yuidoc/"
       },
       "docco":{
         "index.js":"docco/"
