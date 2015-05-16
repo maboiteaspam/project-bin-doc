@@ -47,7 +47,7 @@ Create a ```.local.json``` file on root directory of your project.
       },
       "yuidoc":{
         "paths":{
-          "*":"yuidoc/"
+          "":"yuidoc/"
         }
       },
       "docco":{
