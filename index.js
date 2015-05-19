@@ -185,6 +185,10 @@ var env = !program.env?'local':program.env;
         if(docConfig.yuidoc.syntaxtype){
           cmd += '--syntaxtype "'+docConfig.yuidoc.syntaxtype+'" ';
         }
+        if(docConfig.yuidoc.helpers){
+          docConfig.yuidoc.helpers.push(path.joint(__dirname, 'yuidoc-include-helper.js'));
+          cmd += '--helpers '+docConfig.yuidoc.helpers.join(',');
+        }
         cmd += '<%=projectPath%>/'+from+' ';
         line.stream(cmd, function(){
           this.spinUntil(/.+/);
