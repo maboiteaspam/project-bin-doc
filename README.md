@@ -53,7 +53,7 @@ Create a ```.local.json``` file on root directory of your project.
     },
     "doc":{
       "ghBranch":"TO UPDATE",
-      "outPath":"/ome/path", // if not set, it is a temp directory
+      "outPath":"/some/path", // if not set, it is a temp directory
       "jsdox":{
         "paths":{
           "index.js":"jsdox/"

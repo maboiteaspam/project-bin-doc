@@ -31,7 +31,7 @@ node_modules
 .local.json
 
 
-
+docs/
 .idea/
 
 .local
