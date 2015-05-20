@@ -101,7 +101,7 @@ var env = !program.env?'local':program.env;
           .ensureEmptyDir(docConfig.outPath, function(err){
             this.display();
             this.dieOnError();
-            this.saveValue('tmpPath', docConfig.outPath);
+            this.saveValue('tmpPath', path.resolve(docConfig.outPath));
           })
       })
       .stream('cd <%=tmpPath%>', function(){
@@ -136,7 +136,7 @@ var env = !program.env?'local':program.env;
     /**
      *  JsDox
      */
-      .when(docConfig.jsdox.paths.length>0, function(line){
+      .when(docConfig.jsdox.paths, function(line){
         line.subtitle('', 'Running jsdox')
           .each(docConfig.jsdox.paths, function(from, to){
             line.ensureEmptyDir('<%=tmpPath%>/'+to);
@@ -153,7 +153,7 @@ var env = !program.env?'local':program.env;
     /**
      *  JsDoc
      */
-      .when(docConfig.jsdoc.paths.length>0, function(line){
+      .when(docConfig.jsdoc.paths, function(line){
         line.subtitle('', 'Running jsdoc')
           .each(docConfig.jsdoc.paths, function(from, to){
             line.ensureEmptyDir('<%=tmpPath%>/'+to);
@@ -169,7 +169,7 @@ var env = !program.env?'local':program.env;
     /**
      *  YuiDoc
      */
-      .when(docConfig.yuidoc.paths.length>0, function(line){
+      .when(docConfig.yuidoc.paths, function(line){
         line.subtitle('', 'Running yuidoc')
           .each(docConfig.yuidoc.paths, function(from, to){
             line.ensureEmptyDir('<%=tmpPath%>/'+to);
@@ -211,7 +211,7 @@ var env = !program.env?'local':program.env;
     /**
      *  docco
      */
-      .when(docConfig.docco.paths.length>0, function(line){
+      .when(docConfig.docco.paths, function(line){
         line.subtitle('', 'Running docco')
           .each(docConfig.docco.paths, function(from, to){
             line.ensureEmptyDir('<%=tmpPath%>/'+to);
@@ -318,6 +318,7 @@ var env = !program.env?'local':program.env;
           .subtitle('', 'Cleaning up')
           .stream('cd <%=projectPath%>').rmdir('<%=tmpPath%>')
       })
+      .subtitle('', 'All done !')
       .run(new Transport());
 
   });
