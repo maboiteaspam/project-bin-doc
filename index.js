@@ -16,7 +16,6 @@ var pkg = require(path.join(projectPath, 'package.json') );
 
 var releaseType;
 var revision = pkg.version;
-var tmpPath;
 var sshUrl = pkg.repository.url.replace(/https?:\/\//,'ssh://git@');
 
 program
@@ -89,19 +88,29 @@ var env = !program.env?'local':program.env;
     /**
      *  Temp directory setup
      */
-      .subtitle('', 'Setting up directory')
-      .mktemp(pkg.name, function(err, tmpDir){
-        this.display();
-        this.dieOnError();
-        tmpPath = tmpDir;
-        this.saveValue('tmpPath', tmpPath);
-      }).stream('cd <%=tmpPath%>', function(){
+      .when(!docConfig.outPath, function(line){
+        line.subtitle('', 'Setting up temp directory')
+          .mktemp(pkg.name, function(err, tmpDir){
+            this.display();
+            this.dieOnError();
+            this.saveValue('tmpPath', tmpDir);
+          })
+      })
+      .when(docConfig.outPath, function(line){
+        line.subtitle('', 'Setting up out directory')
+          .ensureEmptyDir(docConfig.outPath, function(err){
+            this.display();
+            this.dieOnError();
+            this.saveValue('tmpPath', docConfig.outPath);
+          })
+      })
+      .stream('cd <%=tmpPath%>', function(){
         this.display();
       })
     /**
      *  Repository preparation
      */
-      .skip(!docConfig.ghBranch, function(line){
+      .when(docConfig.ghBranch, function(line){
         line.subtitle('', 'Setting up git repository')
           .subtitle('', 'on <%=ghBranch%>')
           .stream('git clone <%=sshUrl%> .', function(){
@@ -127,7 +136,7 @@ var env = !program.env?'local':program.env;
     /**
      *  JsDox
      */
-      .skip(docConfig.jsdox.paths.length<1, function(line){
+      .when(docConfig.jsdox.paths.length>0, function(line){
         line.subtitle('', 'Running jsdox')
           .each(docConfig.jsdox.paths, function(from, to){
             line.ensureEmptyDir('<%=tmpPath%>/'+to);
@@ -144,7 +153,7 @@ var env = !program.env?'local':program.env;
     /**
      *  JsDoc
      */
-      .skip(docConfig.jsdoc.paths.length<1, function(line){
+      .when(docConfig.jsdoc.paths.length>0, function(line){
         line.subtitle('', 'Running jsdoc')
           .each(docConfig.jsdoc.paths, function(from, to){
             line.ensureEmptyDir('<%=tmpPath%>/'+to);
@@ -160,7 +169,7 @@ var env = !program.env?'local':program.env;
     /**
      *  YuiDoc
      */
-      .skip(docConfig.yuidoc.paths.length<1, function(line){
+      .when(docConfig.yuidoc.paths.length>0, function(line){
         line.subtitle('', 'Running yuidoc')
           .each(docConfig.yuidoc.paths, function(from, to){
             line.ensureEmptyDir('<%=tmpPath%>/'+to);
@@ -202,7 +211,7 @@ var env = !program.env?'local':program.env;
     /**
      *  docco
      */
-      .skip(docConfig.docco.paths.length<1, function(line){
+      .when(docConfig.docco.paths.length>0, function(line){
         line.subtitle('', 'Running docco')
           .each(docConfig.docco.paths, function(from, to){
             line.ensureEmptyDir('<%=tmpPath%>/'+to);
@@ -235,7 +244,7 @@ var env = !program.env?'local':program.env;
     /**
      *  apidoc
      */
-      .skip(!docConfig.apidoc, function(line){
+      .when(docConfig.apidoc, function(line){
         line.subtitle('', 'Running apidoc')
           .each(docConfig.apidoc.paths, function(from, to){
             line.ensureEmptyDir('<%=tmpPath%>/'+to);
@@ -260,7 +269,7 @@ var env = !program.env?'local':program.env;
     /**
      *  MOCHA
      */
-      .skip(!docConfig.mocha, function(line){
+      .when(docConfig.mocha, function(line){
         line.subtitle('', 'Generating mocha TOC')
           .stream('cd <%=projectPath%>')
           .stream('mocha --reporter markdown > <%=tmpPath%>/mocha-toc.md', function(){
@@ -272,7 +281,7 @@ var env = !program.env?'local':program.env;
     /**
      *  Git commit and push
      */
-      .skip(!docConfig.ghBranch, function(line){
+      .when(docConfig.ghBranch, function(line){
         line.subtitle('', 'Pushing to remote')
           .stream('cd <%=tmpPath%>')
           .stream('git add -A', function(){
@@ -304,10 +313,11 @@ var env = !program.env?'local':program.env;
     /**
      *  Clean up
      */
-      .subtitle('', 'Cleaning up')
-      .stream('cd <%=projectPath%>', function(){
-        this.display();
-      }).rmdir('<%=tmpPath%>')
+      .when(!docConfig.outPath, function(line){
+        line
+          .subtitle('', 'Cleaning up')
+          .stream('cd <%=projectPath%>').rmdir('<%=tmpPath%>')
+      })
       .run(new Transport());
 
   });
