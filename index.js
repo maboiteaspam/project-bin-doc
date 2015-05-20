@@ -88,7 +88,7 @@ var env = !program.env?'local':program.env;
     /**
      *  Temp directory setup
      */
-      .when(!docConfig.outPath, function(line){
+      .when(!docConfig.outpath, function(line){
         line.subtitle('', 'Setting up temp directory')
           .mktemp(pkg.name, function(err, tmpDir){
             this.display();
@@ -96,12 +96,12 @@ var env = !program.env?'local':program.env;
             this.saveValue('tmpPath', tmpDir);
           })
       })
-      .when(docConfig.outPath, function(line){
+      .when(docConfig.outpath, function(line){
         line.subtitle('', 'Setting up out directory')
-          .ensureEmptyDir(docConfig.outPath, function(err){
+          .ensureEmptyDir(docConfig.outpath, function(err){
             this.display();
             this.dieOnError();
-            this.saveValue('tmpPath', path.resolve(docConfig.outPath));
+            this.saveValue('tmpPath', path.resolve(docConfig.outpath));
           })
       })
       .stream('cd <%=tmpPath%>', function(){
@@ -313,7 +313,7 @@ var env = !program.env?'local':program.env;
     /**
      *  Clean up
      */
-      .when(!docConfig.outPath, function(line){
+      .when(!docConfig.outpath, function(line){
         line
           .subtitle('', 'Cleaning up')
           .stream('cd <%=projectPath%>').rmdir('<%=tmpPath%>')
