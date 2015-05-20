@@ -85,11 +85,11 @@ var env = !program.env?'local':program.env;
         this.saveValue('mocha', docConfig.mocha);
         next();
       })
-      .title('', 'Generating documentation \n' +
-      'on <%=ghBranch%> for <%=releaseType%> <%=revision%>')
+      .title('', '\nGenerating documentation for <%=releaseType%> <%=revision%>\n')
     /**
      *  Temp directory setup
      */
+      .subtitle('', 'Setting up directory')
       .mktemp(pkg.name, function(err, tmpDir){
         this.display();
         this.dieOnError();
@@ -101,15 +101,19 @@ var env = !program.env?'local':program.env;
     /**
      *  Repository preparation
      */
-      .stream('git clone <%=sshUrl%> .', function(){
-        this.warn(/fatal:/);
-        this.display();
-      }).stream('git checkout <%=ghBranch%>', function(){
-        this.warn(/fatal:/);
-        this.display();
-      }).stream('git checkout -b <%=ghBranch%>', function(){
-        this.warn(/fatal:/);
-        this.display();
+      .skip(!docConfig.ghBranch, function(line){
+        line.subtitle('', 'Setting up git repository')
+          .subtitle('', 'on <%=ghBranch%>')
+          .stream('git clone <%=sshUrl%> .', function(){
+            this.warn(/fatal:/);
+            this.display();
+          }).stream('git checkout <%=ghBranch%>', function(){
+            this.warn(/fatal:/);
+            this.display();
+          }).stream('git checkout -b <%=ghBranch%>', function(){
+            this.warn(/fatal:/);
+            this.display();
+          })
       })
     /**
      *  README
@@ -123,183 +127,184 @@ var env = !program.env?'local':program.env;
     /**
      *  JsDox
      */
-      .skip(docConfig.jsdox.paths.length)
-      .each(docConfig.jsdox.paths, function(from, to){
-        line.ensureEmptyDir('<%=tmpPath%>/'+to);
+      .skip(docConfig.jsdox.paths.length<1, function(line){
+        line.subtitle('', 'Running jsdox')
+          .each(docConfig.jsdox.paths, function(from, to){
+            line.ensureEmptyDir('<%=tmpPath%>/'+to);
+          })
+          .each(docConfig.jsdox.paths, function(from, to){
+            line.stream('jsdox -r --output <%=tmpPath%>/'+to+' <%=projectPath%>/'+from, function(){
+              this.spinUntil(/.+/);
+              this.success('completed');
+              this.display();
+            });
+
+          })
       })
-      .skip(docConfig.jsdox.paths.length)
-      .each(docConfig.jsdox.paths, function(from, to){
-        line.stream('jsdox -r --output <%=tmpPath%>/'+to+' <%=projectPath%>/'+from, function(){
-          this.spinUntil(/.+/);
-          this.success('completed');
-          this.display();
-        });
-
-      })
-
-
     /**
      *  JsDoc
      */
-      .skip(docConfig.jsdoc.paths.length)
-      .each(docConfig.jsdoc.paths, function(from, to){
-        line.ensureEmptyDir('<%=tmpPath%>/'+to);
-      })
-      .skip(docConfig.jsdoc.paths.length)
-      .each(docConfig.jsdoc.paths, function(from, to){
-        line.stream('jsdoc -r <%=projectPath%>/'+from+' -d <%=tmpPath%>/'+to, function(){
-          this.spinUntil(/.+/);
-          this.success('completed');
-          this.display();
-        });
+      .skip(docConfig.jsdoc.paths.length<1, function(line){
+        line.subtitle('', 'Running jsdoc')
+          .each(docConfig.jsdoc.paths, function(from, to){
+            line.ensureEmptyDir('<%=tmpPath%>/'+to);
+          }).each(docConfig.jsdoc.paths, function(from, to){
+            line.stream('jsdoc -r <%=projectPath%>/'+from+' -d <%=tmpPath%>/'+to, function(){
+              this.spinUntil(/.+/);
+              this.success('completed');
+              this.display();
+            });
 
+          })
       })
-
     /**
      *  YuiDoc
      */
-      .skip(docConfig.yuidoc.paths.length)
-      .each(docConfig.yuidoc.paths, function(from, to){
-        line.ensureEmptyDir('<%=tmpPath%>/'+to);
-      })
-      .skip(docConfig.yuidoc.paths.length)
-      .each(docConfig.yuidoc.paths, function(from, to){
-        var cmd = 'yuidoc ';
-        cmd += '-o <%=tmpPath%>/'+to+' ';
-        cmd += '-c <%=projectPath%>/package.json ';
-        if(docConfig.yuidoc.selleck){
-          cmd += '--selleck ';
-        }
-        if(docConfig.yuidoc.lint){
-          cmd += '--lint ';
-        }
-        if(docConfig.yuidoc.themedir){
-          cmd += '-t "'+docConfig.yuidoc.themedir+'" ';
-        }
-        if(docConfig.yuidoc.exclude){
-          cmd += '-x "'+docConfig.yuidoc.exclude.join(',')+'" ';
-        }
-        if(docConfig.yuidoc.theme){
-          cmd += '-T "'+docConfig.yuidoc.theme+'" ';
-        }
-        if(docConfig.yuidoc.syntaxtype){
-          cmd += '--syntaxtype "'+docConfig.yuidoc.syntaxtype+'" ';
-        }
-        if(docConfig.yuidoc.helpers){
-          docConfig.yuidoc.helpers.push(path.joint(__dirname, 'yuidoc-include-helper.js'));
-          cmd += '--helpers '+docConfig.yuidoc.helpers.join(',');
-        }
-        cmd += '<%=projectPath%>/'+from+' ';
-        line.stream(cmd, function(){
-          this.spinUntil(/.+/);
-          this.success('completed');
-          this.display();
-        });
+      .skip(docConfig.yuidoc.paths.length<1, function(line){
+        line.subtitle('', 'Running yuidoc')
+          .each(docConfig.yuidoc.paths, function(from, to){
+            line.ensureEmptyDir('<%=tmpPath%>/'+to);
+          }).each(docConfig.yuidoc.paths, function(from, to){
+            var cmd = 'yuidoc ';
+            cmd += '-o <%=tmpPath%>/'+to+' ';
+            cmd += '-c <%=projectPath%>/package.json ';
+            if(docConfig.yuidoc.selleck){
+              cmd += '--selleck ';
+            }
+            if(docConfig.yuidoc.lint){
+              cmd += '--lint ';
+            }
+            if(docConfig.yuidoc.themedir){
+              cmd += '-t "'+docConfig.yuidoc.themedir+'" ';
+            }
+            if(docConfig.yuidoc.exclude){
+              cmd += '-x "'+docConfig.yuidoc.exclude.join(',')+'" ';
+            }
+            if(docConfig.yuidoc.theme){
+              cmd += '-T "'+docConfig.yuidoc.theme+'" ';
+            }
+            if(docConfig.yuidoc.syntaxtype){
+              cmd += '--syntaxtype "'+docConfig.yuidoc.syntaxtype+'" ';
+            }
+            if(docConfig.yuidoc.helpers){
+              docConfig.yuidoc.helpers.push(path.joint(__dirname, 'yuidoc-include-helper.js'));
+              cmd += '--helpers '+docConfig.yuidoc.helpers.join(',');
+            }
+            cmd += '<%=projectPath%>/'+from+' ';
+            line.stream(cmd, function(){
+              this.spinUntil(/.+/);
+              this.success('completed');
+              this.display();
+            });
 
+          })
       })
-
     /**
      *  docco
      */
-      .skip(docConfig.docco.paths.length)
-      .each(docConfig.docco.paths, function(from, to){
-        line.ensureEmptyDir('<%=tmpPath%>/'+to);
+      .skip(docConfig.docco.paths.length<1, function(line){
+        line.subtitle('', 'Running docco')
+          .each(docConfig.docco.paths, function(from, to){
+            line.ensureEmptyDir('<%=tmpPath%>/'+to);
+          }).each(docConfig.docco.paths, function(from, to){
+            var cmd = 'docco ';
+            cmd += '-o <%=tmpPath%>/'+to+' ';
+            if(docConfig.docco.layout){
+              cmd += '-l "'+docConfig.docco.layout+'" ';
+            }
+            if(docConfig.docco.template){
+              cmd += '-t "'+docConfig.docco.template+'" ';
+            }
+            if(docConfig.docco.extension){
+              cmd += '-e "'+docConfig.docco.extension+'" ';
+            }
+            if(docConfig.docco.languages){
+              cmd += '-l "'+docConfig.docco.languages+'" ';
+            }
+            if(docConfig.docco.marked){
+              cmd += '-m "'+docConfig.docco.marked+'" ';
+            }
+            cmd += '<%=projectPath%>/'+from+' ';
+            line.stream(cmd, function(){
+              this.spinUntil(/.+/);
+              this.success('completed');
+              this.display();
+            });
+          })
       })
-      .skip(docConfig.docco.paths.length)
-      .each(docConfig.docco.paths, function(from, to){
-        var cmd = 'docco ';
-        cmd += '-o <%=tmpPath%>/'+to+' ';
-        if(docConfig.docco.layout){
-          cmd += '-l "'+docConfig.docco.layout+'" ';
-        }
-        if(docConfig.docco.template){
-          cmd += '-t "'+docConfig.docco.template+'" ';
-        }
-        if(docConfig.docco.extension){
-          cmd += '-e "'+docConfig.docco.extension+'" ';
-        }
-        if(docConfig.docco.languages){
-          cmd += '-l "'+docConfig.docco.languages+'" ';
-        }
-        if(docConfig.docco.marked){
-          cmd += '-m "'+docConfig.docco.marked+'" ';
-        }
-        cmd += '<%=projectPath%>/'+from+' ';
-        line.stream(cmd, function(){
-          this.spinUntil(/.+/);
-          this.success('completed');
-          this.display();
-        });
-      })
-
-
     /**
      *  apidoc
      */
-      .skip(docConfig.apidoc.paths.length)
-      .each(docConfig.apidoc.paths, function(from, to){
-        line.ensureEmptyDir('<%=tmpPath%>/'+to);
+      .skip(!docConfig.apidoc, function(line){
+        line.subtitle('', 'Running apidoc')
+          .each(docConfig.apidoc.paths, function(from, to){
+            line.ensureEmptyDir('<%=tmpPath%>/'+to);
+          })
+          .each(docConfig.apidoc.paths, function(from, to){
+            var cmd = 'apidoc ';
+            if(docConfig.apidoc.filters){
+              cmd += '-f "'+docConfig.apidoc.filters+'" ';
+            }
+            if(docConfig.apidoc.template){
+              cmd += '-t "'+docConfig.apidoc.template+'" ';
+            }
+            cmd += '-o <%=tmpPath%>/'+to+' ';
+            cmd += '-i <%=projectPath%>/'+from+' ';
+            line.stream(cmd, function(){
+              this.spinUntil(/.+/);
+              this.success('completed');
+              this.display();
+            });
+          })
       })
-      .skip(docConfig.apidoc.paths.length)
-      .each(docConfig.apidoc.paths, function(from, to){
-        var cmd = 'apidoc ';
-        if(docConfig.apidoc.filters){
-          cmd += '-f "'+docConfig.apidoc.filters+'" ';
-        }
-        if(docConfig.apidoc.template){
-          cmd += '-t "'+docConfig.apidoc.template+'" ';
-        }
-        cmd += '-o <%=tmpPath%>/'+to+' ';
-        cmd += '-i <%=projectPath%>/'+from+' ';
-        line.stream(cmd, function(){
-          this.spinUntil(/.+/);
-          this.success('completed');
-          this.display();
-        });
-      })
-
     /**
      *  MOCHA
      */
-      .stream('cd <%=projectPath%>')
-      .skip(!docConfig.mocha)
-      .stream('mocha --reporter markdown > <%=tmpPath%>/mocha-toc.md', function(){
-        this.spinUntil(/.+/);
-        this.success('completed');
-        this.display();
+      .skip(!docConfig.mocha, function(line){
+        line.subtitle('', 'Generating mocha TOC')
+          .stream('cd <%=projectPath%>')
+          .stream('mocha --reporter markdown > <%=tmpPath%>/mocha-toc.md', function(){
+            this.spinUntil(/.+/);
+            this.success('completed');
+            this.display();
+          })
       })
     /**
      *  Git commit and push
      */
-      .stream('cd <%=tmpPath%>')
-      .stream('git add -A', function(){
-        this.display();
-        sendGhAuth(this);
+      .skip(!docConfig.ghBranch, function(line){
+        line.subtitle('', 'Pushing to remote')
+          .stream('cd <%=tmpPath%>')
+          .stream('git add -A', function(){
+            this.display();
+            sendGhAuth(this);
 
-      }).stream('git commit -am "Generate documentation for <%=releaseType%> <%=revision%>"', function(){
-        this.success(/\[([\w-]+)\s+([\w-]+)]/i,
-          'branch\t\t%s\nnew revision\t%s');
-        this.success(/([0-9]+)\s+file[^0-9]+?([0-9]+)?[^0-9]+?([0-9]+)?/i,
-          'changed\t%s\nnew\t\t%s\ndeleted\t%s');
-        this.warn(/(est propre|is clean)/i, 'Nothing to do');
-        sendGhAuth(this);
-        this.display();
+          }).stream('git commit -am "Generate documentation for <%=releaseType%> <%=revision%>"', function(){
+            this.success(/\[([\w-]+)\s+([\w-]+)]/i,
+              'branch\t\t%s\nnew revision\t%s');
+            this.success(/([0-9]+)\s+file[^0-9]+?([0-9]+)?[^0-9]+?([0-9]+)?/i,
+              'changed\t%s\nnew\t\t%s\ndeleted\t%s');
+            this.warn(/(est propre|is clean)/i, 'Nothing to do');
+            sendGhAuth(this);
+            this.display();
 
-      }).stream('git -c core.askpass=true push <%=sshUrl%>', function(){
-        this.warn(/fatal:/);
-        this.success(/(est propre|is clean)/i, 'Everything up-to-date');
-        sendGhAuth(this);
-        this.display();
+          }).stream('git -c core.askpass=true push <%=sshUrl%>', function(){
+            this.warn(/fatal:/);
+            this.success(/(est propre|is clean)/i, 'Everything up-to-date');
+            sendGhAuth(this);
+            this.display();
 
-      }).stream('git status', function(){
-        this.warn(/fatal:/);
-        this.success(/(est propre|is clean)/i, 'Everything up-to-date');
-        sendGhAuth(this);
-        this.display();
+          }).stream('git status', function(){
+            this.warn(/fatal:/);
+            this.success(/(est propre|is clean)/i, 'Everything up-to-date');
+            sendGhAuth(this);
+            this.display();
+          })
       })
     /**
      *  Clean up
      */
+      .subtitle('', 'Cleaning up')
       .stream('cd <%=projectPath%>', function(){
         this.display();
       }).rmdir('<%=tmpPath%>')
