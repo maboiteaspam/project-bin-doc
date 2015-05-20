@@ -1,6 +1,5 @@
-var fs = require('fs');
 module.exports = {
   F: function(filePath) {
-    return ''+fs.readFileSync(filePath, 'utf8');
+    return require('fs').readFileSync(filePath, 'utf8').toString();
   }
 };
